@@ -19,4 +19,4 @@ SOURCES += src/main.cpp\
 HEADERS  += \
         src/vrenderer.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
