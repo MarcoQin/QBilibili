@@ -14,9 +14,13 @@ TEMPLATE = app
 
 
 SOURCES += src/main.cpp\
-        src/vrenderer.cpp
+        src/vrenderer.cpp \
+        src/testwidget.cpp \
+        src/popmenu.cpp
 
 HEADERS  += \
-        src/vrenderer.h
+        src/vrenderer.h \
+        src/testwidget.h \
+        src/popmenu.h
 
-FORMS    +=
+FORMS    += \

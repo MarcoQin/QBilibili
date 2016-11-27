@@ -1,8 +1,13 @@
 #include "vrenderer.h"
 
-VRenderer::VRenderer()
-    :GLWidgetRenderer2()
+#include <Qt>
+#include <QtWidgets>
+
+VRenderer::VRenderer(QWidget *parent)
+    :GLWidgetRenderer2(parent)
 {
+
+    setGeometry(0, 0, 800, 600);
 
 }
 
@@ -51,3 +56,4 @@ void VRenderer::paintGL()
     // swap gl buffer
     swapBuffers();
 }
+
