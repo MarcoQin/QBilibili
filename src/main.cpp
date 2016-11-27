@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
 
     wdt->show();
     wdt->popMenu();
+    QMouseEvent event(QEvent::MouseButtonPress, QPoint(0, 0), Qt::LeftButton, Qt::AllButtons, Qt::NoModifier);
+    qApp->notify(wdt, &event);
 //    layout->setCurrentWidget(wd);
 //    vrenderer.show();
     return a.exec();

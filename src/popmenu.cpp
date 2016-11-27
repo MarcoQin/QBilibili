@@ -21,6 +21,7 @@ public:
 //        QPalette palette = this->palette();
 //        palette.setColor(QPalette::Window, Qt::white);
 //        this->setPalette(palette);
+//        219, 199, 188
                 QHBoxLayout* pLayout = new QHBoxLayout();
                 QLabel *pLabel = new QLabel ("title");
                 pLayout->addWidget (pLabel);
@@ -40,6 +41,24 @@ public:
                 pLayout->addWidget(volmT);
                 pLayout->addWidget(volmS);
                 pLayout->addWidget(timeS);
+                QPushButton *fileB = new QPushButton(this);
+                fileB->setText(tr("Open"));
+                pLayout->addWidget(fileB);
+                QAction *fileA = new QAction(tr("Open File"), this);
+                fileA->setObjectName("File");
+                connect(fileA, &QAction::triggered, [this](){
+                    QString _file = QFileDialog::getOpenFileName();
+//                        lApp->findObject<Interface>()->widget(),
+//                        tr("Open File"),
+//                        lApp->findObject<List>()->defaultPath(Utils::Video | Utils::Audio),
+//                        tr("Media files (%1);;All files (*.*)").arg(Utils::getSuffix(Utils::Video | Utils::Audio, "*.%1").join(' ')));
+//                    if (!_file.isEmpty()){
+//                        lApp->findObject<APlayer>()->stop();
+//                        lApp->findObject<APlayer>()->setMedia(_file);
+//                    }
+                });
+                addAction(fileA);
+                connect(fileB, &QPushButton::clicked, fileA, &QAction::trigger);
     }
 
 };
