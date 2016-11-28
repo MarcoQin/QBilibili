@@ -6,7 +6,7 @@
 PopMenu::PopMenu(QWidget * parent) :
     QWidgetAction(parent)
 {
-
+    qDebug() << "PopMenu init";
 }
 
 
@@ -48,14 +48,7 @@ public:
                 fileA->setObjectName("File");
                 connect(fileA, &QAction::triggered, [this](){
                     QString _file = QFileDialog::getOpenFileName();
-//                        lApp->findObject<Interface>()->widget(),
-//                        tr("Open File"),
-//                        lApp->findObject<List>()->defaultPath(Utils::Video | Utils::Audio),
-//                        tr("Media files (%1);;All files (*.*)").arg(Utils::getSuffix(Utils::Video | Utils::Audio, "*.%1").join(' ')));
-//                    if (!_file.isEmpty()){
-//                        lApp->findObject<APlayer>()->stop();
-//                        lApp->findObject<APlayer>()->setMedia(_file);
-//                    }
+                    qDebug() << _file;
                 });
                 addAction(fileA);
                 connect(fileB, &QPushButton::clicked, fileA, &QAction::trigger);

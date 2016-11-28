@@ -1,7 +1,9 @@
-#include "testwidget.h"
+#include "mainwindow.h"
 #include "popmenu.h"
 
-TestWidget::TestWidget(QWidget *parent): QWidget(parent)
+using namespace UI;
+
+MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
     setMouseTracking(true);
     setAcceptDrops(true);
@@ -12,7 +14,7 @@ TestWidget::TestWidget(QWidget *parent): QWidget(parent)
 }
 
 
-void TestWidget::popMenu()
+void MainWindow::popMenu()
 {
     ShowContextMenu(QPoint(100, 100));
 }
@@ -40,7 +42,7 @@ public:
     }
 };
 
-void TestWidget::ShowContextMenu(const QPoint &pos)
+void MainWindow::ShowContextMenu(const QPoint &pos)
     {
         qDebug()<<":popuprightclickMenu"; //just to see if activated
 //       QMenu contextMenu(tr("Context menu"), this);
@@ -60,3 +62,16 @@ void TestWidget::ShowContextMenu(const QPoint &pos)
        contextMenu.setStyleSheet("QMenu{background:rgba(100, 96, 87, 70%);}QLabel{color:rgba(219, 199, 188, 100%);}");
        contextMenu.exec(mapToGlobal(pos));
     }
+
+void MainWindow::mouseMoveEvent(QMouseEvent *e)
+{
+    QPoint cur = e->pos();
+    int x = cur.x(), y = cur.y(), w = width(), h = height();
+//    qDebug() << x << y << w << h;
+    if (isActiveWindow()) {
+        if (y * 1.0 / h > 0.8) {
+            ShowContextMenu(QPoint(w * 1.0 / 5, y));
+        }
+    }
+    QWidget::mouseMoveEvent(e);
+}

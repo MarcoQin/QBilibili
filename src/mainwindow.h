@@ -3,14 +3,18 @@
 #include <Qt>
 #include <QtWidgets>
 
-class TestWidget : public QWidget
+namespace UI {
+
+class MainWindow : public QWidget
 {
     Q_OBJECT
 public:
-    TestWidget(QWidget *parent);
+    MainWindow(QWidget *parent);
     void popMenu();
+    void mouseMoveEvent(QMouseEvent *e);
 public slots:
     void ShowContextMenu(const QPoint &pos);
 };
 
+}
 #endif // TESTWIDGET_H

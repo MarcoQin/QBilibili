@@ -15,12 +15,12 @@ TEMPLATE = app
 
 SOURCES += src/main.cpp\
         src/vrenderer.cpp \
-        src/testwidget.cpp \
-        src/popmenu.cpp
+        src/popmenu.cpp \
+    src/mainwindow.cpp
 
 HEADERS  += \
         src/vrenderer.h \
-        src/testwidget.h \
-        src/popmenu.h
+        src/popmenu.h \
+    src/mainwindow.h
 
 FORMS    += \

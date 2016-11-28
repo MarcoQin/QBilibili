@@ -1,12 +1,12 @@
 #include <QApplication>
 #include <QtWidgets>
 #include "vrenderer.h"
-#include "testwidget.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    TestWidget *wdt = new TestWidget(NULL);
+    UI::MainWindow *wdt = new UI::MainWindow(NULL);
     VRenderer *vrenderer = new VRenderer(NULL);
     AVPlayer player;
     player.setRenderer(vrenderer);
