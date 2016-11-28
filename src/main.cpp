@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QtWidgets>
 #include "vrenderer.h"
-#include "mainwindow.h"
+#include "UI/mainwindow.h"
 
 int main(int argc, char *argv[])
 {

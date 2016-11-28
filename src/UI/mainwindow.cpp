@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "popmenu.h"
+#include "../popmenu.h"
 
 using namespace UI;
 
