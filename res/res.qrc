@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/Picture">
+        <file>b_play.svg</file>
+        <file>enterfullscreen.svg</file>
+        <file>exitfillscreen_lr.svg</file>
+        <file>exitfillscreen_ub.svg</file>
+        <file>exitfullscreen.svg</file>
+        <file>fillscreen_lr.svg</file>
+        <file>fillscreen_ub.svg</file>
+        <file>fold.svg</file>
+        <file>mute.svg</file>
+        <file>next-episode.svg</file>
+        <file>pause.svg</file>
+        <file>prev_episode.svg</file>
+        <file>unfold.svg</file>
+        <file>vol_high.svg</file>
+        <file>vol_low.svg</file>
+        <file>vol_mid.svg</file>
+        <file>vol_no.svg</file>
+    </qresource>
+</RCC>

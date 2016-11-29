@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+
+<!-- Page 1 -->
+<svg x="0" y="0" width="73" height="73" viewBox="0 0 73 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+style="display: block;margin-left: auto;margin-right: auto;">
+<defs>
+
+<style type="text/css"><![CDATA[
+
+.g1_1{
+fill: #F2F2F2;
+}
+
+
+]]></style>
+
+</defs>
+<path d="M0,0
+L0,73
+L73,73
+L73,0 Z " 
+fill="none" stroke="transparent" />
+<path d="M70.3,9.2L30.6,36.7L70.3,64.2Z" class="g1_1" />
+<path d="M3,64l6,0L9,9L3,9L3,64Z" class="g1_1" />
+<path d="M45.8,12.2L6.1,36.7L45.8,61.1Z" class="g1_1" />
+
+</svg>

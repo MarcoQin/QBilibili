@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "../popmenu.h"
+#include "mainmenu.h"
 
 using namespace UI;
 
@@ -53,8 +53,8 @@ void MainWindow::ShowContextMenu(const QPoint &pos)
 //       contextMenu.addAction(&action1);
 
 
-       PopMenu *popMenuAction = new PopMenu(this);
-       contextMenu.addAction(popMenuAction);
+       MainMenu *menuPanel = new MainMenu(this);
+       contextMenu.addAction(menuPanel);
 
 
        contextMenu.setWindowFlags(contextMenu.windowFlags() | Qt::FramelessWindowHint);
