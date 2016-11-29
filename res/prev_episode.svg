@@ -12,6 +12,10 @@ style="display: block;margin-left: auto;margin-right: auto;">
 
 .g1_1{
 fill: #F2F2F2;
+fill-opacity:1;
+opacity:0.5;
+fill-rule:nonzero;
+stroke: none;
 }
 
 

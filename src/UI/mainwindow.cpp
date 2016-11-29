@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
+#include "processbar.h"
 
 using namespace UI;
 
@@ -53,7 +54,8 @@ void MainWindow::ShowContextMenu(const QPoint &pos)
 //       contextMenu.addAction(&action1);
 
 
-       MainMenu *menuPanel = new MainMenu(this);
+//       MainMenu *menuPanel = new MainMenu(this);
+       ProcessBar *menuPanel = new ProcessBar(this);
        contextMenu.addAction(menuPanel);
 
 

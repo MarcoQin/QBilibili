@@ -9,7 +9,6 @@
         <file>fillscreen_ub.svg</file>
         <file>fold.svg</file>
         <file>mute.svg</file>
-        <file>next-episode.svg</file>
         <file>pause.svg</file>
         <file>prev_episode.svg</file>
         <file>unfold.svg</file>
@@ -17,5 +16,11 @@
         <file>vol_low.svg</file>
         <file>vol_mid.svg</file>
         <file>vol_no.svg</file>
+        <file>next_episode.svg</file>
+        <file>b_play.png</file>
+        <file>enterfullscreen.png</file>
+        <file>pause.png</file>
+        <file>prev_episode.png</file>
+        <file>next_episode.png</file>
     </qresource>
 </RCC>

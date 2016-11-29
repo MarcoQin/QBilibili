@@ -17,13 +17,15 @@ SOURCES += src/main.cpp\
         src/vrenderer.cpp \
         src/popmenu.cpp \
         src/UI/mainwindow.cpp \
-        src/UI/mainmenu.cpp
+        src/UI/mainmenu.cpp \
+        src/UI/processbar.cpp
 
 HEADERS  += \
         src/vrenderer.h \
         src/popmenu.h \
         src/UI/mainwindow.h \
-        src/UI/mainmenu.h
+        src/UI/mainmenu.h \
+        src/UI/processbar.h
 
 FORMS    += \
 
