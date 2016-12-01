@@ -16,7 +16,7 @@ public:
     void setBackgroundAlpha(float alpha);
 
 protected:
-    void paintEvent(QPaintEvent *);
+    virtual void showEvent(QShowEvent *event);
 
 signals:
 
@@ -25,6 +25,9 @@ public slots:
 private:
     QColor backgroundColor;
     int backgroundAlpha = 255;
+    int radius = 4;
+    QFrame *backgroundMask;
+    void applyBackgroundColorEffect();
 };
 
 }
