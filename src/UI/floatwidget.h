@@ -11,6 +11,9 @@ class FloatWidget : public QWidget
     Q_OBJECT
 public:
     explicit FloatWidget(QWidget *parent = 0);
+    void setBackgroundColor(QColor color);
+    void setBackgroundAlpha(int alpha);
+    void setBackgroundAlpha(float alpha);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -21,8 +24,7 @@ public slots:
 
 private:
     QColor backgroundColor;
-    int backgroundAlpha;
-    QPainter curPainter;
+    int backgroundAlpha = 255;
 };
 
 }

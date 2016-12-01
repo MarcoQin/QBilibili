@@ -14,12 +14,34 @@ FloatWidget::FloatWidget(QWidget *parent) :
                    Qt::WindowSystemMenuHint |
                    Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground, true);
-    curPainter = QPainter(this);
-    backgroundAlpha = 200;
+    setAutoFillBackground(true);
     backgroundColor = QColor(100, 96, 87, backgroundAlpha);
+    qDebug() << mapToParent(QPoint(320,127));
+    move(parent->mapToGlobal(QPoint(320,127)));
+}
+
+void FloatWidget::setBackgroundColor(QColor color)
+{
+    backgroundColor = color;
+}
+
+void FloatWidget::setBackgroundAlpha(int alpha)
+{
+    backgroundAlpha = alpha;
+    backgroundColor.setAlpha(alpha);
+}
+
+void FloatWidget::setBackgroundAlpha(float alpha)
+{
+    if (alpha > 1 || alpha < 0){
+        return;
+    }
+    int a = (int)(alpha * 255);
+    setBackgroundAlpha(a);
 }
 
 void FloatWidget::paintEvent(QPaintEvent *)
 {
-    curPainter.fillRect(rect(), backgroundColor);
+    QPainter painter(this);
+    painter.fillRect(rect(), backgroundColor);
 }
