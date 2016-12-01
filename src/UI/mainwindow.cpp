@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
 #include "processbar.h"
+#include "processbarnew.h"
 
 using namespace UI;
 
@@ -79,8 +80,10 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
     setAcceptDrops(true);
     resize(800, 600);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
-    Test1 *t = new Test1(this);
-    t->show();
+//    Test1 *t = new Test1(this);
+//    t->show();
+    ProcessBarNew *b = new ProcessBarNew(this);
+    b->show();
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(ShowContextMenu(const QPoint &)));
 }
@@ -190,6 +193,11 @@ void MainWindow::ShowContextMenu(const QPoint &pos)
 
 void MainWindow::mouseMoveEvent(QMouseEvent *e)
 {
+
+//    qDebug() << "MainWindow Pos: ";
+//    qDebug() << pos();
+//    qDebug() << "MapToGlobalPos: ";
+//    qDebug() << mapToGlobal(pos());
     QPoint cur = e->pos();
     int x = cur.x(), y = cur.y(), w = width(), h = height();
 //    qDebug() << x << y << w << h;

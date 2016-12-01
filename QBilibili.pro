@@ -18,14 +18,18 @@ SOURCES += src/main.cpp\
         src/popmenu.cpp \
         src/UI/mainwindow.cpp \
         src/UI/mainmenu.cpp \
-        src/UI/processbar.cpp
+        src/UI/processbar.cpp \
+        src/UI/floatwidget.cpp \
+        src/UI/processbarnew.cpp
 
 HEADERS  += \
         src/vrenderer.h \
         src/popmenu.h \
         src/UI/mainwindow.h \
         src/UI/mainmenu.h \
-        src/UI/processbar.h
+        src/UI/processbar.h \
+        src/UI/floatwidget.h \
+        src/UI/processbarnew.h
 
 FORMS    += \
 
