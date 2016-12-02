@@ -20,7 +20,6 @@ public:
         RightCenter = 6,
         TopCenter = 7,
         BottomCenter = 8,
-        Custom = 9
     };
     explicit FloatWidget(QWidget *parent = 0);
     void setBackgroundColor(QColor color);
@@ -28,6 +27,7 @@ public:
     void setBackgroundAlpha(float alpha);
     void resetPosition(QWidget *parent);
     void setPosition(Position pos);
+    void setCustomPositionOffset(QPoint offset);
 
 protected:
     virtual void showEvent(QShowEvent *event);
@@ -43,6 +43,8 @@ private:
     QFrame *backgroundMask;
     void applyBackgroundColorEffect();
     Position position = TopLeft;
+    bool useCustomPosOffset = false;
+    QPoint customPosOffset = QPoint(0, 0);
 };
 
 }

@@ -9,6 +9,7 @@ ProcessBarNew::ProcessBarNew(QWidget *parent) :
     setBackgroundColor(QColor(100 - dark, 96 - dark, 87 - dark));
     setBackgroundAlpha(0.8f);
     setPosition(BottomCenter);
+    setCustomPositionOffset(QPoint(0, -40));
 }
 
 

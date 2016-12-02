@@ -105,9 +105,20 @@ void FloatWidget::resetPosition(QWidget *parent)
         move(global.x() - width(), global.y() - height());
         break;
     }
+    if (useCustomPosOffset) {
+        QPoint cur = pos();
+        cur += customPosOffset;
+        move(cur);
+    }
 }
 
 void FloatWidget::setPosition(Position pos)
 {
     position = pos;
+}
+
+void FloatWidget::setCustomPositionOffset(QPoint offset)
+{
+    useCustomPosOffset = true;
+    customPosOffset = offset;
 }
