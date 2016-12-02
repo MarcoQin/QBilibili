@@ -12,23 +12,27 @@ int main(int argc, char *argv[])
     player.setRenderer(vrenderer);
 
 
-    QStackedLayout *layout = new QStackedLayout();
-//    QVBoxLayout *layout = new QVBoxLayout();
-//    layout->setStackingMode(QStackedLayout::StackOne);
+//    QStackedLayout *layout = new QStackedLayout();
+    QGridLayout *layout = new QGridLayout();
+    layout->setSizeConstraint(QLayout::SetMaximumSize);
+    layout->setSpacing(1);
+    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-    layout->addWidget(vrenderer->widget());
-//    TestWidget *wd = new TestWidget(NULL);
-//    layout->addWidget(wd);
+    VRenderer *rd1 = new VRenderer(NULL);
+    AVPlayer p1;
+    p1.setRenderer(rd1);
+    layout->addWidget(rd1->widget(), 0, 1);
+
+//    layout->addWidget(vrenderer->widget());
+    layout->addWidget(vrenderer->widget(), 0, 0);
 
     wdt->setLayout(layout);
-//    QLabel *dst = new QLabel("PushThis", vrenderer.widget());
     player.play("/Users/marcoqin/marco/01.mp4");
+    p1.play("/Users/marcoqin/marco/01.mp4");
 
     wdt->show();
     wdt->popMenu();
-    QMouseEvent event(QEvent::MouseButtonPress, QPoint(0, 0), Qt::LeftButton, Qt::AllButtons, Qt::NoModifier);
-    qApp->notify(wdt, &event);
-//    layout->setCurrentWidget(wd);
-//    vrenderer.show();
+
     return a.exec();
 }
