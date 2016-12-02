@@ -2,6 +2,7 @@
 #define VRENDERER_H
 #include <QtAV>
 #include <QtAVWidgets>
+#include <QTimer>
 
 using namespace QtAV;
 
@@ -11,8 +12,10 @@ public:
     VRenderer(QWidget *parent);
 protected:
     void paintGL();
-public slots:
-    void ShowContextMenu(const QPoint &pos);
+private:
+    QTime frameTime;
+    QTimer timer;
+    long frameCount = 0;
 };
 
 #endif // VRENDERER_H
