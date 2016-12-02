@@ -1,78 +1,8 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
 #include "processbar.h"
-#include "processbarnew.h"
 
 using namespace UI;
-
-class Test1 : public QWidget
-{
-public:
-    Test1(QWidget *parent) :
-        QWidget(parent)
-    {
-//        setAutoFillBackground(true);
-//        QPalette palette = this->palette();
-//        palette.setColor(QPalette::Window, Qt::white);
-//        this->setPalette(palette);
-//        219, 199, 188
-//        setWindowFlags(Qt::Popup);
-//        setWindowFlags(Qt::WindowStaysOnTopHint);
-        setMouseTracking(true);
-        setObjectName(QString("haha"));
-        setWindowFlags(
-                       Qt::Tool |
-                       Qt::FramelessWindowHint|
-                       Qt::WindowStaysOnTopHint |
-                    Qt::X11BypassWindowManagerHint |
-                    Qt::NoDropShadowWindowHint|
-                    Qt::WindowSystemMenuHint|
-                        Qt::SubWindow);
-        QHBoxLayout* pLayout = new QHBoxLayout();
-        QLabel *pLabel = new QLabel ("title");
-        pLayout->addWidget (pLabel);
-        QSpinBox *pSpinBox = new QSpinBox(NULL);
-        pLayout->addWidget (pSpinBox);
-        setLayout (pLayout);
-        QLabel *timeT = new QLabel(tr("Time"), this);
-        QLabel *volmT = new QLabel(tr("Volume"), this);
-        QSlider *timeS = new QSlider(this);
-        QSlider *volmS = new QSlider(this);
-        timeS->setOrientation(Qt::Horizontal);
-        volmS->setOrientation(Qt::Horizontal);
-        timeS->setRange(0, 0);
-        volmS->setRange(0, 100);
-        timeS->setValue(0);
-        pLayout->addWidget(timeT);
-        pLayout->addWidget(volmT);
-        pLayout->addWidget(volmS);
-        pLayout->addWidget(timeS);
-        QPushButton *fileB = new QPushButton(this);
-        fileB->setText(tr("Open"));
-        pLayout->addWidget(fileB);
-        QAction *fileA = new QAction(tr("Open File"), this);
-        fileA->setObjectName("File");
-        connect(fileA, &QAction::triggered, [this](){
-            QString _file = QFileDialog::getOpenFileName();
-            qDebug() << _file;
-        });
-        addAction(fileA);
-        connect(fileB, &QPushButton::clicked, fileA, &QAction::trigger);
-        setAttribute(Qt::WA_TranslucentBackground, true);
-        setStyleSheet("QWidget#haha{background:rgba(100, 96, 87, 70%);}QLabel{color:rgba(219, 199, 188, 100%);}QPushButton{background:rgba(0, 0, 0, 0%);}");
-//        setStyleSheet("QWidget#haha{background:rgba(100, 96, 87, 100%);}");
-//        show();
-    }
-
-protected:
-    void paintEvent(QPaintEvent* /*event*/) {
-     QColor backgroundColor = QColor(100, 96, 87);
-     backgroundColor.setAlpha(200);
-     QPainter customPainter(this);
-     customPainter.fillRect(rect(),backgroundColor);
-    }
-
-};
 
 MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
@@ -80,10 +10,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
     setAcceptDrops(true);
     resize(800, 600);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
-//    Test1 *t = new Test1(this);
-//    t->show();
-    ProcessBarNew *b = new ProcessBarNew(this);
-    b->show();
+    processBar = new ProcessBarNew(this);
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(ShowContextMenu(const QPoint &)));
 }
@@ -203,8 +130,21 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e)
 //    qDebug() << x << y << w << h;
     if (isActiveWindow()) {
         if (y * 1.0 / h > 0.8) {
-            ShowContextMenu(QPoint(w * 1.0 / 5, y));
+//            ShowContextMenu(QPoint(w * 1.0 / 5, y));
+            processBar->show();
+            processBar->resetPosition(this);
+//            processBar->move(mapToGlobal(QPoint(w * 1.0 / 5, h - 200)));
         }
     }
-    QWidget::mouseMoveEvent(e);
+//    QWidget::mouseMoveEvent(e);
+}
+
+void MainWindow::moveEvent(QMoveEvent *event)
+{
+    const QPoint global = this->mapToGlobal(rect().center());
+    if (processBar->isVisible()) {
+        processBar->resetPosition(this);
+//        processBar->move(global.x() - processBar->width() / 2, global.y() - processBar->height() / 2);
+//        processBar->move(mapToGlobal(QPoint(width() * 1.0 / 5, height() - 200)));
+    }
 }

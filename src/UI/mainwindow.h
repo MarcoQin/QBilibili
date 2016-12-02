@@ -3,6 +3,8 @@
 #include <Qt>
 #include <QtWidgets>
 
+#include "processbarnew.h"
+
 namespace UI {
 
 class MainWindow : public QWidget
@@ -11,9 +13,13 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent);
     void popMenu();
+protected:
     void mouseMoveEvent(QMouseEvent *e);
+    void moveEvent(QMoveEvent *event);
 public slots:
     void ShowContextMenu(const QPoint &pos);
+private:
+    ProcessBarNew *processBar;
 };
 
 }

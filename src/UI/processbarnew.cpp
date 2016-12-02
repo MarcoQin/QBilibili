@@ -5,12 +5,10 @@ ProcessBarNew::ProcessBarNew(QWidget *parent) :
     FloatWidget(parent)
 {
     setupUI();
-    setObjectName("haha");
     int dark = 20;
     setBackgroundColor(QColor(100 - dark, 96 - dark, 87 - dark));
-    setBackgroundAlpha(0.7f);
-//    setStyleSheet("QWidget#haha{background:rgba(100, 96, 87, 70%);border-image:url(:/Picture/prev_episode.png)}");
-//    setStyleSheet("background:rgba(100, 96, 87, 70%)");
+    setBackgroundAlpha(0.8f);
+    setPosition(BottomCenter);
 }
 
 
