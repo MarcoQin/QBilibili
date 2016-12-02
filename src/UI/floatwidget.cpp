@@ -63,3 +63,51 @@ void FloatWidget::showEvent(QShowEvent *event){
     backgroundMask->resize(width(), height());
     QWidget::showEvent(event);
 }
+
+void FloatWidget::resetPosition(QWidget *parent)
+{
+    QPoint global;
+    switch (position) {
+    case Center:
+        global = parent->mapToGlobal(parent->rect().center());
+        move(global.x() - width() / 2, global.y() - height() / 2);
+        break;
+    case TopLeft:
+        global = parent->mapToGlobal(parent->rect().topLeft());
+        move(global.x(), global.y());
+        break;
+    case TopRight:
+        global = parent->mapToGlobal(parent->rect().topRight());
+        move(global.x() - width(), global.y());
+        break;
+    case TopCenter:
+        global = parent->mapToGlobal(QPoint(parent->width() / 2, 0));
+        move(global.x() - width() / 2, global.y());
+        break;
+    case LeftCenter:
+        global = parent->mapToGlobal(QPoint(0, parent->height() / 2));
+        move(global.x(), global.y() - height() / 2);
+        break;
+    case RightCenter:
+        global = parent->mapToGlobal(QPoint(parent->width(), parent->height() / 2));
+        move(global.x() - width(), global.y() - height() / 2);
+        break;
+    case BottomLeft:
+        global = parent->mapToGlobal(parent->rect().bottomLeft());
+        move(global.x(), global.y() - height());
+        break;
+    case BottomCenter:
+        global = parent->mapToGlobal(QPoint(parent->width() / 2, parent->height()));
+        move(global.x() - width() / 2, global.y() - height());
+        break;
+    case BottomRight:
+        global = parent->mapToGlobal(parent->rect().bottomRight());
+        move(global.x() - width(), global.y() - height());
+        break;
+    }
+}
+
+void FloatWidget::setPosition(Position pos)
+{
+    position = pos;
+}
