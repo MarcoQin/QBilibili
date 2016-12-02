@@ -14,12 +14,14 @@ public:
     MainWindow(QWidget *parent);
     void popMenu();
 protected:
-    void mouseMoveEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *event);
     void moveEvent(QMoveEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 public slots:
     void ShowContextMenu(const QPoint &pos);
 private:
     ProcessBarNew *processBar;
+    QPoint dragPosition;
 };
 
 }

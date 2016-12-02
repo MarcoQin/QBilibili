@@ -118,14 +118,22 @@ void MainWindow::ShowContextMenu(const QPoint &pos)
        contextMenu.exec(mapToGlobal(pos));
     }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *e)
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        dragPosition = event->globalPos() - frameGeometry().topLeft();
+        event->accept();
+    }
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
 
 //    qDebug() << "MainWindow Pos: ";
 //    qDebug() << pos();
 //    qDebug() << "MapToGlobalPos: ";
 //    qDebug() << mapToGlobal(pos());
-    QPoint cur = e->pos();
+    QPoint cur = event->pos();
     int x = cur.x(), y = cur.y(), w = width(), h = height();
 //    qDebug() << x << y << w << h;
     if (isActiveWindow()) {
@@ -136,7 +144,12 @@ void MainWindow::mouseMoveEvent(QMouseEvent *e)
 //            processBar->move(mapToGlobal(QPoint(w * 1.0 / 5, h - 200)));
         }
     }
-//    QWidget::mouseMoveEvent(e);
+
+    /* handle drag window event*/
+    if (event->buttons() & Qt::LeftButton) {
+        move(event->globalPos() - dragPosition);
+        event->accept();
+    }
 }
 
 void MainWindow::moveEvent(QMoveEvent *event)

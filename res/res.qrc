@@ -23,4 +23,7 @@
         <file>prev_episode.png</file>
         <file>next_episode.png</file>
     </qresource>
+    <qresource prefix="/qss">
+        <file>slider.qss</file>
+    </qresource>
 </RCC>

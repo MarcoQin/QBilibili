@@ -32,6 +32,17 @@ void ProcessBarNew::setupUI()
 
     timeSlider = new QSlider(this);
     timeSlider->setOrientation(Qt::Horizontal);
+    QFile f(":/qss/slider.qss");
+    if (!f.exists()) {
+        qDebug() << "slider.qss not exists!!";
+    } else {
+        f.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&f);
+        timeSlider->setStyleSheet(ts.readAll());
+        f.close();
+    }
+
+
     mainLayout->addWidget(timeSlider, 1, 0, 1, 14 + baseWidth * 2);
     mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
     setLayout(mainLayout);
