@@ -4,6 +4,7 @@
 #include <QtWidgets>
 
 #include "processbarnew.h"
+#include "titlebar.h"
 
 namespace UI {
 
@@ -19,9 +20,14 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 public slots:
     void ShowContextMenu(const QPoint &pos);
+    void hideCursor();
+    void showCursor();
 private:
     ProcessBarNew *processBar;
     QPoint dragPosition;
+    QTimer *autoHideTimer;
+    int autoHideTimeOut = 1500;
+    TitleBar *titleBar;
 };
 
 }

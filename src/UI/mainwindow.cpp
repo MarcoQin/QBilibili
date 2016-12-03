@@ -4,15 +4,34 @@
 
 using namespace UI;
 
-MainWindow::MainWindow(QWidget *parent): QWidget(parent)
+MainWindow::MainWindow(QWidget *parent) :
+    QWidget(parent)
 {
+    setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true);
     setAcceptDrops(true);
     resize(800, 600);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     processBar = new ProcessBarNew(this);
+    titleBar = new TitleBar(this);
+    autoHideTimer = new QTimer(this);
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(ShowContextMenu(const QPoint &)));
+    connect(autoHideTimer, SIGNAL(timeout()), processBar, SLOT(hide()));
+    connect(autoHideTimer, SIGNAL(timeout()), titleBar, SLOT(hide()));
+    connect(autoHideTimer, SIGNAL(timeout()), this, SLOT(hideCursor()));
+    autoHideTimer->start(autoHideTimeOut);
+}
+
+void MainWindow::hideCursor()
+{
+    QApplication::setOverrideCursor(Qt::BlankCursor);
+}
+
+
+void MainWindow::showCursor()
+{
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 
@@ -129,20 +148,26 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
 
-//    qDebug() << "MainWindow Pos: ";
-//    qDebug() << pos();
-//    qDebug() << "MapToGlobalPos: ";
-//    qDebug() << mapToGlobal(pos());
     QPoint cur = event->pos();
     int x = cur.x(), y = cur.y(), w = width(), h = height();
 //    qDebug() << x << y << w << h;
     if (isActiveWindow()) {
-        if (y * 1.0 / h > 0.8) {
+//        if (y * 1.0 / h > 0.8) {
 //            ShowContextMenu(QPoint(w * 1.0 / 5, y));
+//            processBar->show();
+//            processBar->resetPosition(this);
+//            processBar->move(mapToGlobal(QPoint(w * 1.0 / 5, h - 200)));
+//        }
+        if (!processBar->isVisible()) {
             processBar->show();
             processBar->resetPosition(this);
-//            processBar->move(mapToGlobal(QPoint(w * 1.0 / 5, h - 200)));
         }
+        if (!titleBar->isVisible()) {
+            titleBar->show();
+            titleBar->resetPosition(this);
+        }
+        showCursor();
+        autoHideTimer->start(autoHideTimeOut);
     }
 
     /* handle drag window event*/
@@ -154,10 +179,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::moveEvent(QMoveEvent *event)
 {
-    const QPoint global = this->mapToGlobal(rect().center());
     if (processBar->isVisible()) {
         processBar->resetPosition(this);
-//        processBar->move(global.x() - processBar->width() / 2, global.y() - processBar->height() / 2);
-//        processBar->move(mapToGlobal(QPoint(width() * 1.0 / 5, height() - 200)));
     }
 }
