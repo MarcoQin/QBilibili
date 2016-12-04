@@ -22,6 +22,12 @@
         <file>pause.png</file>
         <file>prev_episode.png</file>
         <file>next_episode.png</file>
+        <file>close-btn.png</file>
+        <file>close-btn-1.png</file>
+        <file>max-btn.png</file>
+        <file>max-btn-1.png</file>
+        <file>min-btn.png</file>
+        <file>min-btn-1.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>slider.qss</file>

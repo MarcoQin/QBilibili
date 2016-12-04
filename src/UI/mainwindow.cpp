@@ -20,6 +20,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(autoHideTimer, SIGNAL(timeout()), processBar, SLOT(hide()));
     connect(autoHideTimer, SIGNAL(timeout()), titleBar, SLOT(hide()));
     connect(autoHideTimer, SIGNAL(timeout()), this, SLOT(hideCursor()));
+
+    connect(titleBar->close, SIGNAL(clicked(bool)), this, SLOT(close()));
+    connect(titleBar->min, SIGNAL(clicked(bool)), this, SLOT(setMinimumWindow()));
+    connect(titleBar->max, SIGNAL(clicked(bool)), this, SLOT(setFullScreen()));
+
     autoHideTimer->start(autoHideTimeOut);
 }
 
@@ -29,9 +34,9 @@ void MainWindow::hideCursor()
 }
 
 
-void MainWindow::showCursor()
+void MainWindow::showCursor(QCursor &cursor)
 {
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::setOverrideCursor(cursor);
 }
 
 
@@ -148,16 +153,18 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
 
+    QCursor cursor = Qt::ArrowCursor;
     QPoint cur = event->pos();
     int x = cur.x(), y = cur.y(), w = width(), h = height();
 //    qDebug() << x << y << w << h;
     if (isActiveWindow()) {
-//        if (y * 1.0 / h > 0.8) {
+        if (h - y > 0 && h - y < 10) {
+            cursor = Qt::SizeVerCursor;
 //            ShowContextMenu(QPoint(w * 1.0 / 5, y));
 //            processBar->show();
 //            processBar->resetPosition(this);
 //            processBar->move(mapToGlobal(QPoint(w * 1.0 / 5, h - 200)));
-//        }
+        }
         if (!processBar->isVisible()) {
             processBar->show();
             processBar->resetPosition(this);
@@ -165,14 +172,17 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         if (!titleBar->isVisible()) {
             titleBar->show();
             titleBar->resetPosition(this);
+            titleBar->resetSize(this);
         }
-        showCursor();
+        showCursor(cursor);
         autoHideTimer->start(autoHideTimeOut);
     }
 
     /* handle drag window event*/
     if (event->buttons() & Qt::LeftButton) {
-        move(event->globalPos() - dragPosition);
+//        move(event->globalPos() - dragPosition);
+        QPoint global = mapToGlobal(rect().topLeft());
+        setGeometry(global.x(), global.y(), w, event->globalPos().y() - global.y());
         event->accept();
     }
 }
@@ -182,4 +192,36 @@ void MainWindow::moveEvent(QMoveEvent *event)
     if (processBar->isVisible()) {
         processBar->resetPosition(this);
     }
+    if (titleBar->isVisible()) {
+        titleBar->resetPosition(this);
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    titleBar->resetSize(this);
+}
+
+void MainWindow::setFullScreen()
+{
+    titleBar->hide();
+    processBar->hide();
+    qDebug() << windowState();
+    if (windowState() & Qt::WindowFullScreen) {
+        setWindowState(Qt::WindowNoState);
+    } else {
+        setWindowState(Qt::WindowFullScreen);
+    }
+}
+
+void MainWindow::setMinimumWindow()
+{
+    titleBar->hide();
+    processBar->hide();
+    setWindowState(Qt::WindowMinimized);
+}
+
+void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    setFullScreen();
 }

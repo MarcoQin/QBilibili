@@ -23,6 +23,10 @@ void ProcessBarNew::setupUI()
     next->setStyleSheet("border-image:url(:/Picture/next_episode.png);min-width:32px; min-height:32px;");
 
     QGridLayout *mainLayout = new QGridLayout;
+    mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
+//    mainLayout->setSpacing(1);
+//    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(20, 10, 20, 10);
 
     int baseWidth = 10;
 

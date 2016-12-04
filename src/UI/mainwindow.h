@@ -18,10 +18,14 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void moveEvent(QMoveEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    virtual void resizeEvent(QResizeEvent *event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
 public slots:
     void ShowContextMenu(const QPoint &pos);
     void hideCursor();
-    void showCursor();
+    void showCursor(QCursor &cursor);
+    void setFullScreen();
+    void setMinimumWindow();
 private:
     ProcessBarNew *processBar;
     QPoint dragPosition;
