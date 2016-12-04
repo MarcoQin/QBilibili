@@ -14,10 +14,18 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent);
     void popMenu();
+    enum ResizeDirection {
+        Left = 0x00000001,
+        Top = 0x00000002,
+        Right = 0x00000004,
+        Bottom = 0x00000008
+    };
+
 protected:
     void mouseMoveEvent(QMouseEvent *event);
     void moveEvent(QMoveEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
 public slots:
@@ -32,6 +40,10 @@ private:
     QTimer *autoHideTimer;
     int autoHideTimeOut = 1500;
     TitleBar *titleBar;
+    bool needResize = false;
+    ResizeDirection resizeDirection;
+    int resizeMargin = 4;
+    QCursor cursor = Qt::ArrowCursor;
 };
 
 }

@@ -146,25 +146,67 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
         dragPosition = event->globalPos() - frameGeometry().topLeft();
+
+        QPoint cur = event->pos();
+        int x = cur.x(), y = cur.y(), w = width(), h = height();
+        int lx = 0, ly = 0;
+        int dx = x - lx, dy = y - ly;
+        int drx = w - x, dry = h - y;
+        if (dry > 0 && dry < resizeMargin) {
+            cursor = Qt::SizeVerCursor;
+            needResize = true;
+            resizeDirection = Bottom;
+        } else if (dy > 0 && dy < resizeMargin) {
+            cursor = Qt::SizeVerCursor;
+            needResize = true;
+            resizeDirection = Top;
+        } else if (drx > 0 && drx < resizeMargin) {
+            cursor = Qt::SizeHorCursor;
+            needResize = true;
+            resizeDirection = Right;
+        } else if (dx > 0 && dx < resizeMargin) {
+            cursor = Qt::SizeHorCursor;
+            needResize = true;
+            resizeDirection = Left;
+        }
+
         event->accept();
     }
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    needResize = false;
+    cursor = Qt::ArrowCursor;
+    event->accept();
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
 
-    QCursor cursor = Qt::ArrowCursor;
     QPoint cur = event->pos();
     int x = cur.x(), y = cur.y(), w = width(), h = height();
-//    qDebug() << x << y << w << h;
+    int lx = 0, ly = 0;
+
     if (isActiveWindow()) {
-        if (h - y > 0 && h - y < 10) {
-            cursor = Qt::SizeVerCursor;
-//            ShowContextMenu(QPoint(w * 1.0 / 5, y));
-//            processBar->show();
-//            processBar->resetPosition(this);
-//            processBar->move(mapToGlobal(QPoint(w * 1.0 / 5, h - 200)));
+        if (!needResize) {
+            cursor = Qt::ArrowCursor;
         }
+
+        if (cursor.shape() == Qt::ArrowCursor || cursor.shape() == Qt::BlankCursor) {
+            int dx = x - lx, dy = y - ly;
+            int drx = w - x, dry = h - y;
+            if (dry > 0 && dry < resizeMargin) {
+                cursor = Qt::SizeVerCursor;
+            } else if (dy > 0 && dy < resizeMargin) {
+                cursor = Qt::SizeVerCursor;
+            } else if (drx > 0 && drx < resizeMargin) {
+                cursor = Qt::SizeHorCursor;
+            } else if (dx > 0 && dx < resizeMargin) {
+                cursor = Qt::SizeHorCursor;
+            }
+        }
+
         if (!processBar->isVisible()) {
             processBar->show();
             processBar->resetPosition(this);
@@ -180,9 +222,23 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     /* handle drag window event*/
     if (event->buttons() & Qt::LeftButton) {
-//        move(event->globalPos() - dragPosition);
-        QPoint global = mapToGlobal(rect().topLeft());
-        setGeometry(global.x(), global.y(), w, event->globalPos().y() - global.y());
+        if (!needResize) {
+            move(event->globalPos() - dragPosition);
+        } else {
+            QPoint global = mapToGlobal(rect().topLeft());
+            switch(resizeDirection) {
+            case Bottom:
+                setGeometry(global.x(), global.y(), w, event->globalPos().y() - global.y());
+                break;
+            case Right:
+                setGeometry(global.x(), global.y(), event->globalPos().x() - global.x(), h);
+                break;
+            case Left:
+                QPoint rightX = mapToGlobal(QPoint(rect().right(), 0));
+                setGeometry(event->globalPos().x(), global.y(), rightX.x() - event->globalPos().x(), h);
+                break;
+            }
+        }
         event->accept();
     }
 }
@@ -200,6 +256,8 @@ void MainWindow::moveEvent(QMoveEvent *event)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     titleBar->resetSize(this);
+    titleBar->resetPosition(this);
+    processBar->resetPosition(this);
 }
 
 void MainWindow::setFullScreen()
