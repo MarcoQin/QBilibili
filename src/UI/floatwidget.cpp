@@ -122,3 +122,9 @@ void FloatWidget::setCustomPositionOffset(QPoint offset)
     useCustomPosOffset = true;
     customPosOffset = offset;
 }
+
+void FloatWidget::setRadius(int r)
+{
+    radius = r;
+    applyBackgroundColorEffect();
+}

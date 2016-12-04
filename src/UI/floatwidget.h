@@ -31,6 +31,7 @@ public:
 
 protected:
     virtual void showEvent(QShowEvent *event);
+    void setRadius(int r);
 
 
 
