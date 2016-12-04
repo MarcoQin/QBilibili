@@ -14,12 +14,11 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent);
     void popMenu();
-    enum ResizeDirection {
-        Left = 0x00000001,
-        Top = 0x00000002,
-        Right = 0x00000004,
-        Bottom = 0x00000008
-    };
+    static constexpr int None = 0x00000000;
+    static constexpr int Left = 0x00000001;
+    static constexpr int Top = 0x00000002;
+    static constexpr int Right = 0x00000004;
+    static constexpr int Bottom = 0x00000008;
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -37,13 +36,18 @@ public slots:
 private:
     ProcessBarNew *processBar;
     QPoint dragPosition;
+    QPoint pressPosition;
+    int pressWidth;
+    int pressHeight;
     QTimer *autoHideTimer;
     int autoHideTimeOut = 1500;
     TitleBar *titleBar;
     bool needResize = false;
-    ResizeDirection resizeDirection;
-    int resizeMargin = 4;
+    int resizeDirection = None;
+    int resizeMargin = 5;
     QCursor cursor = Qt::ArrowCursor;
+    int delta_x = 0;
+    int delta_y = 0;
 };
 
 }

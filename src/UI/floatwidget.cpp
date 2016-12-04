@@ -11,12 +11,13 @@ FloatWidget::FloatWidget(QWidget *parent) :
     setWindowFlags(Qt::Tool |
                    Qt::FramelessWindowHint |
                    Qt::WindowStaysOnTopHint |
-                   Qt::X11BypassWindowManagerHint |
+//                   Qt::X11BypassWindowManagerHint |
                    Qt::NoDropShadowWindowHint |
-                   Qt::WindowSystemMenuHint |
+//                   Qt::WindowSystemMenuHint |
                    Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground, true);
     backgroundMask = new QFrame(this);
+    backgroundMask->setMouseTracking(true);
     setBackgroundColor(QColor(100, 96, 87, backgroundAlpha));
 }
 
@@ -62,6 +63,11 @@ void FloatWidget::setBackgroundAlpha(float alpha)
 void FloatWidget::showEvent(QShowEvent *event){
     backgroundMask->resize(width(), height());
     QWidget::showEvent(event);
+}
+
+void FloatWidget::resizeEvent(QResizeEvent *event)
+{
+    backgroundMask->resize(width(), height());
 }
 
 void FloatWidget::resetPosition(QWidget *parent)

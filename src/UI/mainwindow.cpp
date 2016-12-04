@@ -146,28 +146,35 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
         dragPosition = event->globalPos() - frameGeometry().topLeft();
+        pressPosition = event->globalPos();
+        pressWidth = width();
+        pressHeight = height();
 
         QPoint cur = event->pos();
         int x = cur.x(), y = cur.y(), w = width(), h = height();
         int lx = 0, ly = 0;
         int dx = x - lx, dy = y - ly;
         int drx = w - x, dry = h - y;
+        resizeDirection = None;
         if (dry > 0 && dry < resizeMargin) {
-            cursor = Qt::SizeVerCursor;
             needResize = true;
-            resizeDirection = Bottom;
-        } else if (dy > 0 && dy < resizeMargin) {
-            cursor = Qt::SizeVerCursor;
+            resizeDirection = resizeDirection | Bottom;
+            delta_y = dry;
+        }
+        if (dy > 0 && dy < resizeMargin) {
             needResize = true;
-            resizeDirection = Top;
-        } else if (drx > 0 && drx < resizeMargin) {
-            cursor = Qt::SizeHorCursor;
+            resizeDirection = resizeDirection | Top;
+            delta_y = dy;
+        }
+        if (drx > 0 && drx < resizeMargin) {
             needResize = true;
-            resizeDirection = Right;
-        } else if (dx > 0 && dx < resizeMargin) {
-            cursor = Qt::SizeHorCursor;
+            resizeDirection = resizeDirection | Right;
+            delta_x = drx;
+        }
+        if (dx > 0 && dx < resizeMargin) {
             needResize = true;
-            resizeDirection = Left;
+            resizeDirection = resizeDirection | Left;
+            delta_x = dx;
         }
 
         event->accept();
@@ -195,16 +202,45 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
         if (cursor.shape() == Qt::ArrowCursor || cursor.shape() == Qt::BlankCursor) {
             int dx = x - lx, dy = y - ly;
+//            qDebug() << dx << dy;
             int drx = w - x, dry = h - y;
+            int direct = None;
             if (dry > 0 && dry < resizeMargin) {
-                cursor = Qt::SizeVerCursor;
-            } else if (dy > 0 && dy < resizeMargin) {
-                cursor = Qt::SizeVerCursor;
-            } else if (drx > 0 && drx < resizeMargin) {
-                cursor = Qt::SizeHorCursor;
-            } else if (dx > 0 && dx < resizeMargin) {
-                cursor = Qt::SizeHorCursor;
+                direct |= Bottom;
             }
+            if (dy > 0 && dy < resizeMargin) {
+                direct |= Top;
+            }
+            if (drx > 0 && drx < resizeMargin) {
+                direct |= Right;
+            }
+            if (dx > 0 && dx < resizeMargin) {
+                direct |= Left;
+            }
+
+            switch(direct) {
+            case Bottom:
+                cursor = Qt::SizeVerCursor;
+                break;
+            case Top:
+                cursor = Qt::SizeVerCursor;
+                break;
+            case Right:
+                cursor = Qt::SizeHorCursor;
+                break;
+            case Left:
+                cursor = Qt::SizeHorCursor;
+                break;
+            case Bottom | Left:
+            case Top | Right:
+                cursor = Qt::SizeBDiagCursor;
+                break;
+            case Bottom | Right:
+            case Top | Left:
+                cursor = Qt::SizeFDiagCursor;
+                break;
+            }
+
         }
 
         if (!processBar->isVisible()) {
@@ -234,8 +270,32 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 setGeometry(global.x(), global.y(), event->globalPos().x() - global.x(), h);
                 break;
             case Left:
-                QPoint rightX = mapToGlobal(QPoint(rect().right(), 0));
-                setGeometry(event->globalPos().x(), global.y(), rightX.x() - event->globalPos().x(), h);
+            {
+                move(event->globalPos().x() - dragPosition.x(), global.y());
+                resize(pressWidth +  pressPosition.x() - event->globalPos().x(), h);
+                break;
+            }
+            case Top:
+            {
+                move(global.x(), event->globalPos().y() - dragPosition.y());
+                resize(w, pressHeight +  pressPosition.y() - event->globalPos().y());
+                break;
+            }
+            case Left | Top:
+                move(event->globalPos() - dragPosition);
+                resize(pressWidth + pressPosition.x() - event->globalPos().x(), pressHeight + pressPosition.y() - event->globalPos().y());
+                break;
+            case Right | Top:
+                move(global.x(), event->globalPos().y() - dragPosition.y());
+                resize(pressWidth +  event->globalPos().x() - pressPosition.x(), pressHeight + pressPosition.y() - event->globalPos().y());
+                break;
+            case Left | Bottom:
+                move(event->globalPos().x() - dragPosition.x(), global.y());
+                resize(pressWidth + pressPosition.x() - event->globalPos().x(), pressHeight + event->globalPos().y() - pressPosition.y());
+                break;
+            case Right | Bottom:
+                resize(pressWidth + event->globalPos().x() - pressPosition.x(), pressHeight + event->globalPos().y() - pressPosition.y());
+            default:
                 break;
             }
         }
@@ -255,9 +315,10 @@ void MainWindow::moveEvent(QMoveEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    titleBar->resetSize(this);
     titleBar->resetPosition(this);
+    titleBar->resetSize(this);
     processBar->resetPosition(this);
+    event->accept();
 }
 
 void MainWindow::setFullScreen()

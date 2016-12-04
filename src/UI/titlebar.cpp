@@ -37,6 +37,12 @@ void TitleBar::mousePressEvent(QMouseEvent *event)
     QApplication::instance()->postEvent(parent(), eventCopy);
 }
 
+void TitleBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    QMouseEvent* eventCopy = new QMouseEvent(*event);
+    QApplication::instance()->postEvent(parent(), eventCopy);
+}
+
 void TitleBar::mouseMoveEvent(QMouseEvent *event)
 {
     QMouseEvent* eventCopy = new QMouseEvent(*event);
