@@ -5,6 +5,7 @@
 
 #include "processbarnew.h"
 #include "titlebar.h"
+#include "../vrenderer.h"
 
 namespace UI {
 
@@ -12,13 +13,14 @@ class MainWindow : public QWidget
 {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent);
+    explicit MainWindow(QWidget *parent);
     void popMenu();
     static constexpr int None = 0x00000000;
     static constexpr int Left = 0x00000001;
     static constexpr int Top = 0x00000002;
     static constexpr int Right = 0x00000004;
     static constexpr int Bottom = 0x00000008;
+    AVPlayer *getPlayer();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -27,6 +29,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void setupUI();
 public slots:
     void ShowContextMenu(const QPoint &pos);
     void hideCursor();
@@ -34,7 +37,10 @@ public slots:
     void setFullScreen();
     void setMinimumWindow();
 private:
-    ProcessBarNew *processBar;
+    void connectSignals();
+    QGridLayout *mainLayout;
+    VRenderer *vrenderer;
+    AVPlayer *player;
     QPoint dragPosition;
     QPoint pressPosition;
     int pressWidth;
@@ -42,12 +48,11 @@ private:
     QTimer *autoHideTimer;
     int autoHideTimeOut = 1500;
     TitleBar *titleBar;
+    ProcessBarNew *processBar;
     bool needResize = false;
     int resizeDirection = None;
     int resizeMargin = 5;
     QCursor cursor = Qt::ArrowCursor;
-    int delta_x = 0;
-    int delta_y = 0;
 };
 
 }

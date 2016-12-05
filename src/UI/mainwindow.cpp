@@ -7,14 +7,40 @@ using namespace UI;
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent)
 {
+    setupUI();
+
+    connectSignals();
+}
+
+void MainWindow::setupUI()
+{
     setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true);
     setAcceptDrops(true);
+
+    mainLayout = new QGridLayout();
+    mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    mainLayout->setSpacing(1);
+    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    setLayout(mainLayout);
+
+    vrenderer = new VRenderer(NULL);
+    player = new AVPlayer();
+    player->setRenderer(vrenderer);
+    mainLayout->addWidget(vrenderer->widget(), 0, 0);
+
     resize(800, 600);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     processBar = new ProcessBarNew(this);
     titleBar = new TitleBar(this);
     autoHideTimer = new QTimer(this);
+    autoHideTimer->start(autoHideTimeOut);
+}
+
+
+void MainWindow::connectSignals()
+{
     connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
             this, SLOT(ShowContextMenu(const QPoint &)));
     connect(autoHideTimer, SIGNAL(timeout()), processBar, SLOT(hide()));
@@ -25,7 +51,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(titleBar->min, SIGNAL(clicked(bool)), this, SLOT(setMinimumWindow()));
     connect(titleBar->max, SIGNAL(clicked(bool)), this, SLOT(setFullScreen()));
 
-    autoHideTimer->start(autoHideTimeOut);
 }
 
 void MainWindow::hideCursor()
@@ -109,10 +134,10 @@ public:
         pLayout->addWidget(fileB);
         QAction *fileA = new QAction(tr("Open File"), this);
         fileA->setObjectName("File");
-        connect(fileA, &QAction::triggered, [this](){
-            QString _file = QFileDialog::getOpenFileName();
-            qDebug() << _file;
-        });
+        // connect(fileA, &QAction::triggered, [this](){
+            // QString _file = QFileDialog::getOpenFileName();
+            // qDebug() << _file;
+        // });
         addAction(fileA);
         connect(fileB, &QPushButton::clicked, fileA, &QAction::trigger);
     }
@@ -122,7 +147,7 @@ public:
 void MainWindow::ShowContextMenu(const QPoint &pos)
     {
 
-        qDebug()<<":popuprightclickMenu"; //just to see if activated
+        // qDebug()<<":popuprightclickMenu"; //just to see if activated
 //       QMenu contextMenu(tr("Context menu"), this);
        CustomQMenu contextMenu(this);
 
@@ -159,22 +184,18 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         if (dry > 0 && dry < resizeMargin) {
             needResize = true;
             resizeDirection = resizeDirection | Bottom;
-            delta_y = dry;
         }
         if (dy > 0 && dy < resizeMargin) {
             needResize = true;
             resizeDirection = resizeDirection | Top;
-            delta_y = dy;
         }
         if (drx > 0 && drx < resizeMargin) {
             needResize = true;
             resizeDirection = resizeDirection | Right;
-            delta_x = drx;
         }
         if (dx > 0 && dx < resizeMargin) {
             needResize = true;
             resizeDirection = resizeDirection | Left;
-            delta_x = dx;
         }
 
         event->accept();
@@ -311,6 +332,7 @@ void MainWindow::moveEvent(QMoveEvent *event)
     if (titleBar->isVisible()) {
         titleBar->resetPosition(this);
     }
+    event->accept();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -343,4 +365,10 @@ void MainWindow::setMinimumWindow()
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
     setFullScreen();
+    event->accept();
+}
+
+AVPlayer *MainWindow::getPlayer()
+{
+    return player;
 }
