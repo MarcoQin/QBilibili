@@ -14,6 +14,8 @@ private:
     QPushButton *prev;
     QPushButton *next;
     QSlider *timeSlider;
+    QLabel *timePass;
+    QLabel *timeAll;
     void setupUI();
 };
 
