@@ -28,6 +28,12 @@
         <file>max-btn-1.png</file>
         <file>min-btn.png</file>
         <file>min-btn-1.png</file>
+        <file>exitfullscreen.png</file>
+        <file>mute.png</file>
+        <file>vol_high.png</file>
+        <file>vol_low.png</file>
+        <file>vol_mid.png</file>
+        <file>vol_no.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>slider.qss</file>
