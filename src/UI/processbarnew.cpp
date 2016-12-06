@@ -11,17 +11,25 @@ ProcessBarNew::ProcessBarNew(QWidget *parent) :
     setBackgroundAlpha(0.8f);
     setPosition(BottomCenter);
     setCustomPositionOffset(QPoint(0, -40));
+
+    connectSignals();
 }
 
 
 void ProcessBarNew::setupUI()
 {
+    volume = new QPushButton(this);
+    volume->setStyleSheet("border-image:url(:/Picture/vol_high.png)");
+
     prev = new QPushButton(this);
-    prev->setStyleSheet("border-image:url(:/Picture/prev_episode.png);min-width:24px; min-height:24px;");
+    prev->setStyleSheet("border-image:url(:/Picture/prev_episode.png);");
     play = new QPushButton(this);
-    play->setStyleSheet("border-image:url(:/Picture/b_play.png);min-width:24px; min-height:24px;");
+    play->setStyleSheet("border-image:url(:/Picture/b_play.png);");
     next = new QPushButton(this);
-    next->setStyleSheet("border-image:url(:/Picture/next_episode.png);min-width:24px; min-height:24px;");
+    next->setStyleSheet("border-image:url(:/Picture/next_episode.png);");
+
+    fullScreen = new QPushButton(this);
+    fullScreen->setStyleSheet("border-image:url(:/Picture/enterfullscreen.png);");
 
     timeSlider = new QSlider(this);
     timeSlider->setOrientation(Qt::Horizontal);
@@ -58,15 +66,22 @@ void ProcessBarNew::setupUI()
 
     // new stuffs
     resize(440, 64);
+    volume->setGeometry(9, 15, 16, 16);
     prev->setGeometry(160, 13, 24, 24);
     play->setGeometry(210, 13, 24, 24);
     next->setGeometry(256, 13, 24, 24);
-    timeSlider->setGeometry(58, 40, 324, 17);
-    // volSlider->setGeometry(32, 15, 80, 16);
+    fullScreen->setGeometry(400, 13, 20, 20);
+    timeSlider->setGeometry(63, 40, 314, 17);
     volSlider->setGeometry(32, 15, 80, 17);
-    timePass->setGeometry(4, 40, 42, 14);
-    timeAll->setGeometry(388, 40, 42, 14);
+    timePass->setGeometry(4, 40, 57, 14);
+    timeAll->setGeometry(381, 40, 57, 14);
+}
 
+void ProcessBarNew::connectSignals()
+{
+    connect(play, SIGNAL(clicked(bool)), this, SIGNAL(playButtonClicked()));
+    connect(timeSlider, SIGNAL(sliderPressed()), this, SLOT(seekBySlider()));
+    connect(timeSlider, SIGNAL(sliderMoved(int)), this, SLOT(seekBySlider(int)));
 }
 
 void ProcessBarNew::mouseMoveEvent(QMouseEvent *event)
@@ -78,4 +93,61 @@ void ProcessBarNew::mouseMoveEvent(QMouseEvent *event)
 void ProcessBarNew::setTimeOutTimer(QTimer *timer)
 {
     parentAutoHideTimer = timer;
+}
+
+void ProcessBarNew::changePlayBtnBackground(PlayState state)
+{
+    switch(state) {
+        case PlayingState:
+            play->setStyleSheet("border-image:url(:/Picture/pause.png);");
+            break;
+        case PausedState:
+        case StoppedState:
+            play->setStyleSheet("border-image:url(:/Picture/b_play.png);");
+            break;
+    }
+}
+
+
+void ProcessBarNew::playerStateChanged(QtAV::AVPlayer::State state)
+{
+    qDebug() << "playerStateChanged";
+    changePlayBtnBackground((PlayState)state);
+    switch(state) {
+        case PlayingState:
+            break;
+        case PausedState:
+            break;
+        case StoppedState:
+            break;
+    }
+}
+
+void ProcessBarNew::onPositionChanged(qint64 pos)
+{
+    timeSlider->setValue(pos);
+    timePass->setText(QTime(0, 0, 0).addMSecs(pos).toString("HH:mm:ss"));
+}
+
+void ProcessBarNew::onStartPlay(qint64 startPos, qint64 stopPos)
+{
+    timeSlider->setMinimum(startPos);
+    timeSlider->setMaximum(stopPos);
+    timeSlider->setValue(0);
+    timeAll->setText(QTime(0, 0, 0).addMSecs(stopPos).toString("HH:mm:ss"));
+}
+
+void ProcessBarNew::seekBySlider(qint64 value)
+{
+    emit sliderValueChanged(value);
+}
+
+void ProcessBarNew::seekBySlider()
+{
+    emit sliderValueChanged((qint64)timeSlider->value());
+}
+
+void ProcessBarNew::seekBySlider(int value)
+{
+    emit sliderValueChanged((qint64)value);
 }

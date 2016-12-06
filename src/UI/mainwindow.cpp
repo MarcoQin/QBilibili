@@ -49,10 +49,16 @@ void MainWindow::connectSignals()
     connect(autoHideTimer, SIGNAL(timeout()), titleBar, SLOT(hide()));
     connect(autoHideTimer, SIGNAL(timeout()), this, SLOT(hideCursor()));
 
-    connect(titleBar->close, SIGNAL(clicked(bool)), this, SLOT(close()));
-    connect(titleBar->min, SIGNAL(clicked(bool)), this, SLOT(setMinimumWindow()));
-    connect(titleBar->max, SIGNAL(clicked(bool)), this, SLOT(setFullScreen()));
+    connect(titleBar, SIGNAL(closeClicked()), this, SLOT(close()));
+    connect(titleBar, SIGNAL(minClicked()), this, SLOT(setMinimumWindow()));
+    connect(titleBar, SIGNAL(maxClicked()), this, SLOT(setFullScreen()));
 
+    connect(processBar, SIGNAL(playButtonClicked()), this, SLOT(playOrPause()));
+    connect(processBar, SIGNAL(sliderValueChanged(qint64)), this, SLOT(seek(qint64)));
+
+    connect(player, SIGNAL(stateChanged(QtAV::AVPlayer::State)), processBar, SLOT(playerStateChanged(QtAV::AVPlayer::State)));
+    connect(player, SIGNAL(positionChanged(qint64)), processBar, SLOT(onPositionChanged(qint64)));
+    connect(player, SIGNAL(started()), this, SLOT(onStartPlay()));
 }
 
 void MainWindow::hideCursor()
@@ -377,4 +383,24 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 AVPlayer *MainWindow::getPlayer()
 {
     return player;
+}
+
+void MainWindow::playOrPause()
+{
+    if (!player->isPlaying()) {
+        player->play();
+        return;
+    }
+    player->pause(!player->isPaused());
+}
+
+void MainWindow::onStartPlay()
+{
+    processBar->onStartPlay(player->mediaStartPosition(), player->mediaStopPosition());
+}
+
+void MainWindow::seek(qint64 pos)
+{
+    player->setSeekType(QtAV::SeekType::AccurateSeek);
+    player->seek(pos);
 }

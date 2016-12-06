@@ -30,12 +30,6 @@ protected:
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void setupUI();
-public slots:
-    void ShowContextMenu(const QPoint &pos);
-    void hideCursor();
-    void showCursor(QCursor &cursor);
-    void setFullScreen();
-    void setMinimumWindow();
 private:
     void connectSignals();
     QGridLayout *mainLayout;
@@ -53,6 +47,15 @@ private:
     int resizeDirection = None;
     int resizeMargin = 5;
     QCursor cursor = Qt::ArrowCursor;
+private slots:
+    void ShowContextMenu(const QPoint &pos);
+    void hideCursor();
+    void showCursor(QCursor &cursor);
+    void setFullScreen();
+    void setMinimumWindow();
+    void playOrPause();
+    void onStartPlay();
+    void seek(qint64 pos);
 };
 
 }

@@ -23,6 +23,11 @@ TitleBar::TitleBar(QWidget *parent) :
     max->setStyleSheet("QPushButton{border-image:url(:/Picture/max-btn.png);}"
                        "QPushButton:hover{border-image:url(:/Picture/max-btn-1.png)}");
     max->setGeometry(48, 4, 12, 12);
+
+
+    connect(close, SIGNAL(clicked(bool)), this, SIGNAL(closeClicked()));
+    connect(min, SIGNAL(clicked(bool)), this, SIGNAL(minClicked()));
+    connect(max, SIGNAL(clicked(bool)), this, SIGNAL(maxClicked()));
 }
 
 

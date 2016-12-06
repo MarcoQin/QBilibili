@@ -7,19 +7,23 @@ namespace UI {
 
 class TitleBar : public FloatWidget
 {
+    Q_OBJECT
 public:
     explicit TitleBar(QWidget *parent);
     void resetSize(QWidget *parent);
-    QPushButton *close;
-    QPushButton *max;
-    QPushButton *min;
+signals:
+    void minClicked();
+    void maxClicked();
+    void closeClicked();
 protected:
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
 private:
     int barHidht = 20;
-    QTimer *parentAutoHideTimer;
+    QPushButton *close;
+    QPushButton *max;
+    QPushButton *min;
 };
 
 }
