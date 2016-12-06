@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent)
 {
     setupUI();
+    processBar->setTimeOutTimer(autoHideTimer);
 
     connectSignals();
 }
@@ -35,6 +36,7 @@ void MainWindow::setupUI()
     processBar = new ProcessBarNew(this);
     titleBar = new TitleBar(this);
     autoHideTimer = new QTimer(this);
+    autoHideTimer->setSingleShot(true);
     autoHideTimer->start(autoHideTimeOut);
 }
 
@@ -55,6 +57,7 @@ void MainWindow::connectSignals()
 
 void MainWindow::hideCursor()
 {
+    qDebug() << "hideCursor";
     QApplication::setOverrideCursor(Qt::BlankCursor);
 }
 
@@ -274,7 +277,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
             titleBar->resetSize(this);
         }
         showCursor(cursor);
-        autoHideTimer->start(autoHideTimeOut);
+        autoHideTimer->stop();
+        if (!(cur.y() < 12 )) {
+            autoHideTimer->start(autoHideTimeOut);
+        }
     }
 
     /* handle drag window event*/

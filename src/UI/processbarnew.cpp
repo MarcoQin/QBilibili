@@ -35,6 +35,18 @@ void ProcessBarNew::setupUI()
         f.close();
     }
 
+    volSlider = new QSlider(this);
+    volSlider->setOrientation(Qt::Horizontal);
+    QFile f1(":/qss/vol_slider.qss");
+    if (!f1.exists()) {
+        qDebug() << "vol_slider.qss not exists!!";
+    } else {
+        f1.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts1(&f1);
+        volSlider->setStyleSheet(ts1.readAll());
+        f1.close();
+    }
+
     QString labelStyle = "QLabel{color:rgba(219, 199, 188, 100%)}";
     timePass = new QLabel(this);
     timePass->setStyleSheet(labelStyle);
@@ -50,7 +62,20 @@ void ProcessBarNew::setupUI()
     play->setGeometry(210, 13, 24, 24);
     next->setGeometry(256, 13, 24, 24);
     timeSlider->setGeometry(58, 40, 324, 17);
+    // volSlider->setGeometry(32, 15, 80, 16);
+    volSlider->setGeometry(32, 15, 80, 17);
     timePass->setGeometry(4, 40, 42, 14);
     timeAll->setGeometry(388, 40, 42, 14);
 
+}
+
+void ProcessBarNew::mouseMoveEvent(QMouseEvent *event)
+{
+    parentAutoHideTimer->stop();
+    event->accept();
+}
+
+void ProcessBarNew::setTimeOutTimer(QTimer *timer)
+{
+    parentAutoHideTimer = timer;
 }

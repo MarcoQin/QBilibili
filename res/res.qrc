@@ -37,5 +37,6 @@
     </qresource>
     <qresource prefix="/qss">
         <file>slider.qss</file>
+        <file>vol_slider.qss</file>
     </qresource>
 </RCC>

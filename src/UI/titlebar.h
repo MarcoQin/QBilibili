@@ -19,6 +19,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 private:
     int barHidht = 20;
+    QTimer *parentAutoHideTimer;
 };
 
 }
