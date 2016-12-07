@@ -18,18 +18,18 @@ ProcessBarNew::ProcessBarNew(QWidget *parent) :
 
 void ProcessBarNew::setupUI()
 {
-    volume = new QPushButton(this);
-    volume->setStyleSheet("border-image:url(:/Picture/vol_high.png)");
+    volumeBtn = new QPushButton(this);
+    volumeBtn->setStyleSheet("border-image:url(:/Picture/vol_high.png)");
 
-    prev = new QPushButton(this);
-    prev->setStyleSheet("border-image:url(:/Picture/prev_episode.png);");
-    play = new QPushButton(this);
-    play->setStyleSheet("border-image:url(:/Picture/b_play.png);");
-    next = new QPushButton(this);
-    next->setStyleSheet("border-image:url(:/Picture/next_episode.png);");
+    prevBtn = new QPushButton(this);
+    prevBtn->setStyleSheet("border-image:url(:/Picture/prev_episode.png);");
+    playBtn = new QPushButton(this);
+    playBtn->setStyleSheet("border-image:url(:/Picture/b_play.png);");
+    nextBtn = new QPushButton(this);
+    nextBtn->setStyleSheet("border-image:url(:/Picture/next_episode.png);");
 
-    fullScreen = new QPushButton(this);
-    fullScreen->setStyleSheet("border-image:url(:/Picture/enterfullscreen.png);");
+    fullScreenBtn = new QPushButton(this);
+    fullScreenBtn->setStyleSheet("border-image:url(:/Picture/enterfullscreen.png);");
 
     timeSlider = new QSlider(this);
     timeSlider->setOrientation(Qt::Horizontal);
@@ -45,6 +45,8 @@ void ProcessBarNew::setupUI()
 
     volSlider = new QSlider(this);
     volSlider->setOrientation(Qt::Horizontal);
+    volSlider->setMaximum(100);
+    volSlider->setValue(100);
     QFile f1(":/qss/vol_slider.qss");
     if (!f1.exists()) {
         qDebug() << "vol_slider.qss not exists!!";
@@ -66,11 +68,11 @@ void ProcessBarNew::setupUI()
 
     // new stuffs
     resize(440, 64);
-    volume->setGeometry(9, 15, 16, 16);
-    prev->setGeometry(160, 13, 24, 24);
-    play->setGeometry(210, 13, 24, 24);
-    next->setGeometry(256, 13, 24, 24);
-    fullScreen->setGeometry(400, 13, 20, 20);
+    volumeBtn->setGeometry(9, 15, 16, 16);
+    prevBtn->setGeometry(160, 13, 24, 24);
+    playBtn->setGeometry(210, 13, 24, 24);
+    nextBtn->setGeometry(256, 13, 24, 24);
+    fullScreenBtn->setGeometry(400, 13, 20, 20);
     timeSlider->setGeometry(63, 40, 314, 17);
     volSlider->setGeometry(32, 15, 80, 17);
     timePass->setGeometry(4, 40, 57, 14);
@@ -79,9 +81,16 @@ void ProcessBarNew::setupUI()
 
 void ProcessBarNew::connectSignals()
 {
-    connect(play, SIGNAL(clicked(bool)), this, SIGNAL(playButtonClicked()));
+    connect(playBtn, SIGNAL(clicked(bool)), this, SIGNAL(playButtonClicked()));
+
     connect(timeSlider, SIGNAL(sliderPressed()), this, SLOT(seekBySlider()));
     connect(timeSlider, SIGNAL(sliderMoved(int)), this, SLOT(seekBySlider(int)));
+
+    connect(volumeBtn, SIGNAL(clicked(bool)), this, SLOT(volumeBtnClicked()));
+    connect(volSlider, SIGNAL(sliderPressed()), this, SLOT(setVolumeBySlider()));
+    connect(volSlider, SIGNAL(sliderMoved(int)), this, SLOT(setVolumeBySlider(int)));
+
+    connect(fullScreenBtn, SIGNAL(clicked(bool)), this, SIGNAL(toggleFullScreen()));
 }
 
 void ProcessBarNew::mouseMoveEvent(QMouseEvent *event)
@@ -99,11 +108,11 @@ void ProcessBarNew::changePlayBtnBackground(PlayState state)
 {
     switch(state) {
         case PlayingState:
-            play->setStyleSheet("border-image:url(:/Picture/pause.png);");
+            playBtn->setStyleSheet("border-image:url(:/Picture/pause.png);");
             break;
         case PausedState:
         case StoppedState:
-            play->setStyleSheet("border-image:url(:/Picture/b_play.png);");
+            playBtn->setStyleSheet("border-image:url(:/Picture/b_play.png);");
             break;
     }
 }
@@ -135,6 +144,8 @@ void ProcessBarNew::onStartPlay(qint64 startPos, qint64 stopPos)
     timeSlider->setMaximum(stopPos);
     timeSlider->setValue(0);
     timeAll->setText(QTime(0, 0, 0).addMSecs(stopPos).toString("HH:mm:ss"));
+
+    setVolumeBySlider(volSlider->value());
 }
 
 void ProcessBarNew::seekBySlider(qint64 value)
@@ -144,10 +155,57 @@ void ProcessBarNew::seekBySlider(qint64 value)
 
 void ProcessBarNew::seekBySlider()
 {
-    emit sliderValueChanged((qint64)timeSlider->value());
+    seekBySlider((qint64)timeSlider->value());
 }
 
 void ProcessBarNew::seekBySlider(int value)
 {
-    emit sliderValueChanged((qint64)value);
+    seekBySlider((qint64)value);
+}
+
+void ProcessBarNew::setVolumeBySlider(int value)
+{
+    emit volumeChanged(value);
+    if (value <= 0) {
+        if (mute) {
+            volumeBtn->setStyleSheet("border-image:url(:/Picture/mute.png)");
+        } else {
+            volumeBtn->setStyleSheet("border-image:url(:/Picture/vol_no.png)");
+        }
+    } else if (value > 0 && value <= 33) {
+        volumeBtn->setStyleSheet("border-image:url(:/Picture/vol_low.png)");
+    } else if (value > 33 && value <= 66) {
+        volumeBtn->setStyleSheet("border-image:url(:/Picture/vol_mid.png)");
+    } else {
+        volumeBtn->setStyleSheet("border-image:url(:/Picture/vol_high.png)");
+    }
+}
+void ProcessBarNew::setVolumeBySlider()
+{
+    setVolumeBySlider(volSlider->value());
+}
+
+void ProcessBarNew::volumeBtnClicked()
+{
+    mute = !mute;
+    if (mute) {
+        lastVolume = volSlider->value();
+        volSlider->setValue(0);
+        setVolumeBySlider(0);
+    } else {
+        setVolumeBySlider(lastVolume);
+        volSlider->setValue(lastVolume);
+    }
+}
+
+void ProcessBarNew::onScreenStateChanged(int state)
+{
+    switch(state) {
+        case 0:
+            fullScreenBtn->setStyleSheet("border-image:url(:/Picture/enterfullscreen.png);");
+            break;
+        case 1:
+            fullScreenBtn->setStyleSheet("border-image:url(:/Picture/exitfullscreen.png);");
+            break;
+    }
 }

@@ -51,14 +51,18 @@ void MainWindow::connectSignals()
 
     connect(titleBar, SIGNAL(closeClicked()), this, SLOT(close()));
     connect(titleBar, SIGNAL(minClicked()), this, SLOT(setMinimumWindow()));
-    connect(titleBar, SIGNAL(maxClicked()), this, SLOT(setFullScreen()));
+    connect(titleBar, SIGNAL(maxClicked()), this, SLOT(toggleFullScreen()));
 
+    connect(processBar, SIGNAL(toggleFullScreen()), this, SLOT(toggleFullScreen()));
     connect(processBar, SIGNAL(playButtonClicked()), this, SLOT(playOrPause()));
     connect(processBar, SIGNAL(sliderValueChanged(qint64)), this, SLOT(seek(qint64)));
+    connect(processBar, SIGNAL(volumeChanged(int)), this, SLOT(setVolume(int)));
+    connect(this, SIGNAL(fullscreenStateChanged(int)), processBar, SLOT(onScreenStateChanged(int)));
 
     connect(player, SIGNAL(stateChanged(QtAV::AVPlayer::State)), processBar, SLOT(playerStateChanged(QtAV::AVPlayer::State)));
     connect(player, SIGNAL(positionChanged(qint64)), processBar, SLOT(onPositionChanged(qint64)));
     connect(player, SIGNAL(started()), this, SLOT(onStartPlay()));
+    connect(player, SIGNAL(loaded()), this, SLOT(fileLoaded()));
 }
 
 void MainWindow::hideCursor()
@@ -294,40 +298,125 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         if (!needResize) {
             move(event->globalPos() - dragPosition);
         } else {
+            bool canResize = h > minWindowHeight && w > minWindowWidth;
             QPoint global = mapToGlobal(rect().topLeft());
+            QPoint bottomRightPos = global + QPoint(w, h);
+            int delta_w, delta_h;
             switch(resizeDirection) {
             case Bottom:
-                setGeometry(global.x(), global.y(), w, event->globalPos().y() - global.y());
+            {
+                delta_h = pressHeight + event->globalPos().y() - pressPosition.y();
+                delta_w = w;
+                if (delta_h < h && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_w = aspectRatio * delta_h;
+                    move(global + QPoint((w - delta_w)/2, 0));
+                }
+                resize(delta_w, delta_h);
                 break;
+            }
             case Right:
-                setGeometry(global.x(), global.y(), event->globalPos().x() - global.x(), h);
+            {
+                delta_h = h;
+                delta_w = pressWidth + event->globalPos().x() - pressPosition.x();
+                if (delta_w < w && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_h = delta_w / aspectRatio;
+                    move(global + QPoint(0, (h - delta_h)/2));
+                }
+                resize(delta_w, delta_h);
                 break;
+            }
             case Left:
             {
-                move(event->globalPos().x() - dragPosition.x(), global.y());
-                resize(pressWidth +  pressPosition.x() - event->globalPos().x(), h);
+                delta_w = pressWidth + pressPosition.x() - event->globalPos().x();
+                delta_h = h;
+                if (delta_w < w && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_h = delta_w / aspectRatio;
+                    move(bottomRightPos - QPoint(delta_w, delta_h) - QPoint(0, (h - delta_h)/2));
+                } else {
+                    move(bottomRightPos - QPoint(delta_w, delta_h));
+                }
+                resize(delta_w, delta_h);
                 break;
             }
             case Top:
             {
-                move(global.x(), event->globalPos().y() - dragPosition.y());
-                resize(w, pressHeight +  pressPosition.y() - event->globalPos().y());
+                delta_w = w;
+                delta_h = pressHeight + pressPosition.y() - event->globalPos().y();
+                if (delta_h < h && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_w = delta_h * aspectRatio;
+                    move(bottomRightPos - QPoint(delta_w, delta_h) - QPoint((w - delta_w)/2, 0));
+                } else {
+                    move(bottomRightPos - QPoint(delta_w, delta_h));
+                }
+                resize(delta_w, delta_h);
                 break;
             }
             case Left | Top:
-                move(event->globalPos() - dragPosition);
-                resize(pressWidth + pressPosition.x() - event->globalPos().x(), pressHeight + pressPosition.y() - event->globalPos().y());
+            {
+                delta_w = pressWidth + pressPosition.x() - event->globalPos().x();
+                delta_h = pressHeight + pressPosition.y() - event->globalPos().y();
+                if ((delta_w < w || delta_h < h) && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_w = delta_h * aspectRatio;
+                }
+                move(bottomRightPos - QPoint(delta_w, delta_h));
+                resize(delta_w, delta_h);
                 break;
+            }
             case Right | Top:
-                move(global.x(), event->globalPos().y() - dragPosition.y());
-                resize(pressWidth +  event->globalPos().x() - pressPosition.x(), pressHeight + pressPosition.y() - event->globalPos().y());
+            {
+                delta_w = pressWidth + event->globalPos().x() - pressPosition.x();
+                delta_h = pressHeight + pressPosition.y() - event->globalPos().y();
+                if ((delta_w < w || delta_h < h) && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_w = delta_h * aspectRatio;
+                }
+                move(global.x() , bottomRightPos.y() - delta_h);
+                resize(delta_w, delta_h);
                 break;
+            }
             case Left | Bottom:
-                move(event->globalPos().x() - dragPosition.x(), global.y());
-                resize(pressWidth + pressPosition.x() - event->globalPos().x(), pressHeight + event->globalPos().y() - pressPosition.y());
+            {
+                delta_w = pressWidth + pressPosition.x() - event->globalPos().x();
+                delta_h = pressHeight + event->globalPos().y() - pressPosition.y();
+                if ((delta_w < w || delta_h < h) && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_w = delta_h * aspectRatio;
+                }
+                move(bottomRightPos.x() - delta_w, global.y());
+                resize(delta_w, delta_h);
                 break;
+            }
             case Right | Bottom:
-                resize(pressWidth + event->globalPos().x() - pressPosition.x(), pressHeight + event->globalPos().y() - pressPosition.y());
+            {
+                delta_w = pressWidth + event->globalPos().x() - pressPosition.x();
+                delta_h = pressHeight + event->globalPos().y() - pressPosition.y();
+                if ((delta_w < w || delta_h < h) && !canResize) {
+                    break;
+                }
+                if (scaleByRatio) {
+                    delta_w = aspectRatio * delta_h;
+                }
+                resize(delta_w, delta_h);
+            }
             default:
                 break;
             }
@@ -355,15 +444,17 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     event->accept();
 }
 
-void MainWindow::setFullScreen()
+void MainWindow::toggleFullScreen()
 {
     titleBar->hide();
     processBar->hide();
     qDebug() << windowState();
     if (windowState() & Qt::WindowFullScreen) {
         setWindowState(Qt::WindowNoState);
+        emit fullscreenStateChanged(0);
     } else {
         setWindowState(Qt::WindowFullScreen);
+        emit fullscreenStateChanged(1);
     }
 }
 
@@ -376,7 +467,7 @@ void MainWindow::setMinimumWindow()
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    setFullScreen();
+    toggleFullScreen();
     event->accept();
 }
 
@@ -403,4 +494,19 @@ void MainWindow::seek(qint64 pos)
 {
     player->setSeekType(QtAV::SeekType::AccurateSeek);
     player->seek(pos);
+}
+
+void MainWindow::setVolume(int value)
+{
+    AudioOutput *ao = player->audio();
+    ao->setVolume((qreal)(value/100.0));
+}
+
+void MainWindow::fileLoaded()
+{
+    videoWidth = player->statistics().video_only.width;
+    videoHeight = player->statistics().video_only.height;
+    aspectRatio = 1.0 * videoWidth / videoHeight;
+    minWindowWidth = aspectRatio * minWindowHeight;
+    resize(videoWidth, videoHeight);
 }

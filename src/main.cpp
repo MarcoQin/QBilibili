@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
 
     AVPlayer *player = wdt->getPlayer();
     wdt->getPlayer()->play("/Users/marcoqin/marco/01.mp4");
+    // wdt->getPlayer()->play("http://live-play-2.acgvideo.com/live/live_374377_4093634.flv?wsSecret=e254bd86b3a21515c9dd00be12f635b2&wsTime=581f53e5");
 //    qDebug() << player.statistics().video.metadata;
 //    p1.play("/Users/marcoqin/marco/01.mp4");
 
@@ -26,7 +27,7 @@ int main(int argc, char *argv[])
     qDebug() << player->statistics().video_only.coded_width;
     qDebug() << player->statistics().video_only.coded_height;
 
-    wdt->resize(QSize(player->statistics().video_only.width / 2, player->statistics().video_only.height / 2));
+    // wdt->resize(QSize(player->statistics().video_only.width / 2, player->statistics().video_only.height / 2));
 
     return a.exec();
 }

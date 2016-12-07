@@ -21,6 +21,8 @@ public:
     static constexpr int Right = 0x00000004;
     static constexpr int Bottom = 0x00000008;
     AVPlayer *getPlayer();
+signals:
+    void fullscreenStateChanged(int state);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -47,15 +49,22 @@ private:
     int resizeDirection = None;
     int resizeMargin = 5;
     QCursor cursor = Qt::ArrowCursor;
+    int videoWidth, videoHeight;
+    bool scaleByRatio = true;
+    int minWindowWidth = 600;
+    int minWindowHeight = 400;
+    qreal aspectRatio;
 private slots:
     void ShowContextMenu(const QPoint &pos);
     void hideCursor();
     void showCursor(QCursor &cursor);
-    void setFullScreen();
+    void toggleFullScreen();
     void setMinimumWindow();
     void playOrPause();
     void onStartPlay();
     void seek(qint64 pos);
+    void setVolume(int value);
+    void fileLoaded();
 };
 
 }

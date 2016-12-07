@@ -16,21 +16,26 @@ public:
 public slots:
     void onPositionChanged(qint64 pos);
     void playerStateChanged(QtAV::AVPlayer::State state);
+    void onScreenStateChanged(int state);
 signals:
     void playButtonClicked();
     void sliderValueChanged(qint64 value);
+    void volumeChanged(int value);
+    void toggleFullScreen();
 protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 private:
-    QPushButton *volume;
-    QPushButton *play;
-    QPushButton *prev;
-    QPushButton *next;
+    QPushButton *volumeBtn;
+    QPushButton *playBtn;
+    QPushButton *prevBtn;
+    QPushButton *nextBtn;
     QSlider *timeSlider;
     QSlider *volSlider;
     QLabel *timePass;
     QLabel *timeAll;
-    QPushButton *fullScreen;
+    QPushButton *fullScreenBtn;
+    int lastVolume;
+    bool mute = false;
     void setupUI();
     void connectSignals();
     QTimer *parentAutoHideTimer;
@@ -44,6 +49,9 @@ private slots:
     void seekBySlider(qint64 value);
     void seekBySlider(int value);
     void seekBySlider();
+    void setVolumeBySlider(int);
+    void setVolumeBySlider();
+    void volumeBtnClicked();
 };
 
 }
