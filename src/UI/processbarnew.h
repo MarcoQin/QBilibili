@@ -11,7 +11,6 @@ class ProcessBarNew : public FloatWidget
     Q_OBJECT
 public:
     explicit ProcessBarNew(QWidget *parent);
-    void setTimeOutTimer(QTimer *timer);
     void onStartPlay(qint64 startPos, qint64 stopPos);
 public slots:
     void onPositionChanged(qint64 pos);
@@ -22,6 +21,7 @@ signals:
     void sliderValueChanged(qint64 value);
     void volumeChanged(int value);
     void toggleFullScreen();
+    void stopTimer();
 protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
 private:
@@ -38,7 +38,6 @@ private:
     bool mute = false;
     void setupUI();
     void connectSignals();
-    QTimer *parentAutoHideTimer;
     enum PlayState{
         PlayingState = AVPlayer::State::PlayingState,
         PausedState = AVPlayer::State::PausedState,

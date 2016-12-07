@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent)
 {
     setupUI();
-    processBar->setTimeOutTimer(autoHideTimer);
 
     connectSignals();
 }
@@ -31,10 +30,18 @@ void MainWindow::setupUI()
     player->setRenderer(vrenderer);
     mainLayout->addWidget(vrenderer->widget(), 0, 0);
 
+    subtitleEngine = new SubtitleFilter(this);
+    subtitleEngine->setPlayer(player);
+    subtitleEngine->setEngines(QStringList() << "LibASS");
+    subtitleEngine->setAutoLoad(true);
+    subtitleEngine->installTo(player);
+    subtitleEngine->setEnabled(true);
+
     resize(800, 600);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     processBar = new ProcessBarNew(this);
     titleBar = new TitleBar(this);
+    mainMenu = new MainMenu(this);
     autoHideTimer = new QTimer(this);
     autoHideTimer->setSingleShot(true);
     autoHideTimer->start(autoHideTimeOut);
@@ -57,7 +64,11 @@ void MainWindow::connectSignals()
     connect(processBar, SIGNAL(playButtonClicked()), this, SLOT(playOrPause()));
     connect(processBar, SIGNAL(sliderValueChanged(qint64)), this, SLOT(seek(qint64)));
     connect(processBar, SIGNAL(volumeChanged(int)), this, SLOT(setVolume(int)));
+    connect(processBar, SIGNAL(stopTimer()), this, SLOT(stopAutoHideTimer()));
     connect(this, SIGNAL(fullscreenStateChanged(int)), processBar, SLOT(onScreenStateChanged(int)));
+
+    connect(mainMenu, SIGNAL(newFileOpened(QString)), this, SLOT(openNewFile(QString)));
+    connect(mainMenu, SIGNAL(stopTimer()), this, SLOT(stopAutoHideTimer()));
 
     connect(player, SIGNAL(stateChanged(QtAV::AVPlayer::State)), processBar, SLOT(playerStateChanged(QtAV::AVPlayer::State)));
     connect(player, SIGNAL(positionChanged(qint64)), processBar, SLOT(onPositionChanged(qint64)));
@@ -433,6 +444,9 @@ void MainWindow::moveEvent(QMoveEvent *event)
     if (titleBar->isVisible()) {
         titleBar->resetPosition(this);
     }
+    if (mainMenu->isVisible()) {
+        mainMenu->resetPosition(this);
+    }
     event->accept();
 }
 
@@ -441,6 +455,9 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     titleBar->resetPosition(this);
     titleBar->resetSize(this);
     processBar->resetPosition(this);
+    if (mainMenu->isVisible()) {
+        mainMenu->resetPosition(this);
+    }
     event->accept();
 }
 
@@ -509,4 +526,25 @@ void MainWindow::fileLoaded()
     aspectRatio = 1.0 * videoWidth / videoHeight;
     minWindowWidth = aspectRatio * minWindowHeight;
     resize(videoWidth, videoHeight);
+    processBar->onStartPlay(player->mediaStartPosition(), player->mediaStopPosition());
+}
+
+void MainWindow::openNewFile(QString fileName)
+{
+    player->setFile(fileName);
+    player->load();
+    if (autoPlay) {
+        player->play();
+    }
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    mainMenu->show();
+    event->accept();
+}
+
+void MainWindow::stopAutoHideTimer()
+{
+    autoHideTimer->stop();
 }

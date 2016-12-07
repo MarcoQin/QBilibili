@@ -6,6 +6,7 @@
 #include "processbarnew.h"
 #include "titlebar.h"
 #include "../vrenderer.h"
+#include "mainmenu.h"
 
 namespace UI {
 
@@ -32,11 +33,13 @@ protected:
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void setupUI();
+    virtual void showEvent(QShowEvent *event);
 private:
     void connectSignals();
     QGridLayout *mainLayout;
     VRenderer *vrenderer;
     AVPlayer *player;
+    SubtitleFilter *subtitleEngine;
     QPoint dragPosition;
     QPoint pressPosition;
     int pressWidth;
@@ -45,15 +48,17 @@ private:
     int autoHideTimeOut = 1500;
     TitleBar *titleBar;
     ProcessBarNew *processBar;
+    MainMenu *mainMenu;
     bool needResize = false;
     int resizeDirection = None;
     int resizeMargin = 5;
     QCursor cursor = Qt::ArrowCursor;
     int videoWidth, videoHeight;
-    bool scaleByRatio = true;
+    bool scaleByRatio = false;
     int minWindowWidth = 600;
     int minWindowHeight = 400;
     qreal aspectRatio;
+    bool autoPlay = true;
 private slots:
     void ShowContextMenu(const QPoint &pos);
     void hideCursor();
@@ -65,6 +70,8 @@ private slots:
     void seek(qint64 pos);
     void setVolume(int value);
     void fileLoaded();
+    void openNewFile(QString fileName);
+    void stopAutoHideTimer();
 };
 
 }

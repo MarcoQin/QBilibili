@@ -2,39 +2,27 @@
 #define MAINMENU_H
 #include <Qt>
 #include <QtWidgets>
-#include <QWidgetAction>
+#include "floatwidget.h"
 
 namespace UI {
 
-class MainMenu : public QWidgetAction
+class MainMenu : public FloatWidget
 {
     Q_OBJECT
 public:
     explicit MainMenu(QWidget * parent);
+signals:
+    void newFileOpened(QString fileName);
+    void stopTimer();
 protected:
-    QWidget * createWidget(QWidget *parent);
-};
-
-class Panel : public QWidget{
-    Q_OBJECT
-public:
-    Panel(QWidget *parent);
+    virtual void mouseMoveEvent(QMouseEvent *event);
 private:
-    QLineEdit *fileChooseLineEditor;
-    QLineEdit *danmChooseLineEditor;
-    QCompleter *fileCompleter;
-    QCompleter *danmCompleter;
-    QPushButton *fileChooseButton;
-    QPushButton *danmChooseButton;
-    QAction *openFileAction;
-    QAction *loadDanmAction;
-    QLabel *alphaLabel;
-    QSlider *alphaSlider;
-    QLabel *loopLabel;
-    QCheckBox *loopCheckbox;
-
-    QGridLayout *mainLayout;
+    QPushButton *openBtn;
+    QPushButton *openURL;
     void setupUI();
+    void connectSignals();
+private slots:
+    void openFile();
 };
 
 

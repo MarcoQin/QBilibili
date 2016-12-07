@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 //    layout->addWidget(rd1->widget(), 0, 1);
 
     AVPlayer *player = wdt->getPlayer();
-    wdt->getPlayer()->play("/Users/marcoqin/marco/01.mp4");
+    // wdt->getPlayer()->play("/Users/marcoqin/marco/01.mp4");
     // wdt->getPlayer()->play("http://live-play-2.acgvideo.com/live/live_374377_4093634.flv?wsSecret=e254bd86b3a21515c9dd00be12f635b2&wsTime=581f53e5");
 //    qDebug() << player.statistics().video.metadata;
 //    p1.play("/Users/marcoqin/marco/01.mp4");

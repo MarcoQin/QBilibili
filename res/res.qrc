@@ -38,5 +38,6 @@
     <qresource prefix="/qss">
         <file>slider.qss</file>
         <file>vol_slider.qss</file>
+        <file>common_button.qss</file>
     </qresource>
 </RCC>

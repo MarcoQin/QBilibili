@@ -95,13 +95,8 @@ void ProcessBarNew::connectSignals()
 
 void ProcessBarNew::mouseMoveEvent(QMouseEvent *event)
 {
-    parentAutoHideTimer->stop();
+    emit stopTimer();
     event->accept();
-}
-
-void ProcessBarNew::setTimeOutTimer(QTimer *timer)
-{
-    parentAutoHideTimer = timer;
 }
 
 void ProcessBarNew::changePlayBtnBackground(PlayState state)
