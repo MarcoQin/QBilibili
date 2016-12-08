@@ -54,6 +54,13 @@ void VRenderer::paintGL()
     painter.setPen(pen);
     painter.drawText(posToDraw, textToDraw);
 
+
+    QFontMetrics fm(font);
+    int pixelsWide = fm.width(textToDraw);
+    int piexelsHigh = fm.height();
+    // qDebug() << pixelsWide << piexelsHigh;
+    // qDebug() << width() ;
+
     painter.drawText(QPoint(300, 100), QString::number(fps));
 //    painter.drawText(QPoint(350, 100), QString::number(frameCount));
 //    painter.drawText(QPoint(400, 100), QString::number(frameTime.elapsed()));

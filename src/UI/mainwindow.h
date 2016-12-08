@@ -54,7 +54,7 @@ private:
     int resizeMargin = 5;
     QCursor cursor = Qt::ArrowCursor;
     int videoWidth, videoHeight;
-    bool scaleByRatio = false;
+    bool scaleByRatio = true;
     int minWindowWidth = 600;
     int minWindowHeight = 400;
     qreal aspectRatio;
