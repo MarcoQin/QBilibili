@@ -21,7 +21,8 @@ SOURCES += src/main.cpp\
         src/UI/processbar.cpp \
         src/UI/floatwidget.cpp \
         src/UI/processbarnew.cpp \
-        src/UI/titlebar.cpp
+        src/UI/titlebar.cpp \
+    src/graphics/dmtext.cpp
 
 HEADERS  += \
         src/vrenderer.h \
@@ -31,7 +32,8 @@ HEADERS  += \
         src/UI/processbar.h \
         src/UI/floatwidget.h \
         src/UI/processbarnew.h \
-        src/UI/titlebar.h
+        src/UI/titlebar.h \
+    src/graphics/dmtext.h
 
 FORMS    += \
 
