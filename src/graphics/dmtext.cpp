@@ -1,6 +1,7 @@
 #include "dmtext.h"
 
-DMText::DMText()
+DMText::DMText(QString &text, QColor &color, QFont &font) :
+    QObject()
 {
 
 }
