@@ -1,4 +1,5 @@
 #include "vrenderer.h"
+#include "lua/luamanager.h"
 
 #include <Qt>
 #include <QtWidgets>
@@ -144,7 +145,9 @@ void VRenderer::w_draw()
     // qDebug() << pixelsWide << piexelsHigh;
     // qDebug() << width() ;
 
-    painter.drawText(QPoint(300, 100), QString::number(fps));
+    LuaManager::instance()->callDrawFunc(painter);
+
+    painter.drawText(QPoint(400, 100), QString::number(fps));
 //    painter.drawText(QPoint(350, 100), QString::number(frameCount));
 //    painter.drawText(QPoint(400, 100), QString::number(frameTime.elapsed()));
 

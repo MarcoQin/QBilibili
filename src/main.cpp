@@ -3,9 +3,11 @@
 #include "vrenderer.h"
 #include "UI/mainwindow.h"
 #include <QtAV/Statistics.h>
+#include "lua/luamanager.h"
 
 int main(int argc, char *argv[])
 {
+    LuaManager::instance();
     QApplication a(argc, argv);
     UI::MainWindow *wdt = new UI::MainWindow(NULL);
 
