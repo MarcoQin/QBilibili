@@ -4,32 +4,24 @@
 #include "UI/mainwindow.h"
 #include <QtAV/Statistics.h>
 #include "lua/luamanager.h"
+#include <IOKit/pwr_mgt/IOPMLib.h>
+
 
 int main(int argc, char *argv[])
 {
-    LuaManager::instance();
     QApplication a(argc, argv);
+    LuaManager::instance();
     UI::MainWindow *wdt = new UI::MainWindow(NULL);
-
-//    VRenderer *rd1 = new VRenderer(NULL);
-//    AVPlayer p1;
-//    p1.setRenderer(rd1);
-//    layout->addWidget(rd1->widget(), 0, 1);
-
-    AVPlayer *player = wdt->getPlayer();
-    // wdt->getPlayer()->play("/Users/marcoqin/marco/01.mp4");
-    // wdt->getPlayer()->play("http://live-play-2.acgvideo.com/live/live_374377_4093634.flv?wsSecret=e254bd86b3a21515c9dd00be12f635b2&wsTime=581f53e5");
-//    qDebug() << player.statistics().video.metadata;
-//    p1.play("/Users/marcoqin/marco/01.mp4");
-
     wdt->show();
-    wdt->popMenu();
-    qDebug() << player->statistics().video_only.width;
-    qDebug() << player->statistics().video_only.height;
-    qDebug() << player->statistics().video_only.coded_width;
-    qDebug() << player->statistics().video_only.coded_height;
 
-    // wdt->resize(QSize(player->statistics().video_only.width / 2, player->statistics().video_only.height / 2));
-
+    // prevent macOS from sleep
+    IOPMAssertionID assertionID;
+    IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep,kIOPMAssertionLevelOn, CFSTR("Describe Activity Type"), &assertionID);
+    if (success == kIOReturnSuccess)
+    {
+        qDebug() << "SUCCESS PREVENT macOS SLEEP";
+//        success = IOPMAssertionRelease(assertionID);
+            //  The system will be able to sleep again.
+    }
     return a.exec();
 }

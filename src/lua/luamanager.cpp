@@ -139,7 +139,15 @@ LuaManager::LuaManager(QObject *parent) : QObject(parent)
     luaL_openlibs(L);
     RegisterDMText(L);
 
-    int error = luaL_dofile(L, "/Users/marcoqin/Codes/cpp_lua/boot.lua");
+    qDebug() << QDir::currentPath();
+    qDebug() << QCoreApplication::applicationDirPath();
+//    int error = luaL_dofile(L, "/Users/marcoqin/Codes/cpp_lua/boot.lua");
+    QString runtimePath = QCoreApplication::applicationDirPath();
+    runtimePath += "/../Resources/boot.lua";
+
+    int error = luaL_dofile(L, runtimePath.toStdString().c_str());
+
+
     if (error)
         qDebug() << "Lua error: " << luaL_checkstring(L, -1);
 }

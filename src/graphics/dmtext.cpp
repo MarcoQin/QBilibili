@@ -20,11 +20,12 @@ void DMText::draw(QPainter &painter)
 //    qDebug() << _color;
 //    painter.setPen(QColor(100, 100, 200, 255));
 //    QFont font;
+//    font.setFamily("Apple Color Emoji");
 //    font.setPixelSize(24);
 //    painter.setFont(font);
 //    painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 //    painter.drawLine(300, 100, 400, 400);
-//    painter.drawText(QPoint(300, 100), _text);
+//    painter.drawText(QPoint(300, 300), _text);
     QPainterPath path;
     QPen pen;
     _font.setWeight(QFont::Weight::Normal);

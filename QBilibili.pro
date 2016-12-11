@@ -18,7 +18,8 @@ INCLUDEPATH += \
 
 LIBS += \
     -L/usr/local/Cellar/lua/5.2.4_4/lib \
-    -llua
+    -llua \
+    -framework IOKit
 
 SOURCES += src/main.cpp\
         src/vrenderer.cpp \
