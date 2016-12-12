@@ -19,6 +19,7 @@ protected:
 private:
     static VRenderer *_instance;
     QTime frameTime;
+    int lastFrameTiem = 0;
     QTimer timer;
     long frameCount = 0;
 private slots:

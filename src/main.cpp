@@ -4,7 +4,10 @@
 #include "UI/mainwindow.h"
 #include <QtAV/Statistics.h>
 #include "lua/luamanager.h"
+
+#ifdef __APPLE__
 #include <IOKit/pwr_mgt/IOPMLib.h>
+#endif
 
 
 int main(int argc, char *argv[])
@@ -14,6 +17,7 @@ int main(int argc, char *argv[])
     UI::MainWindow *wdt = new UI::MainWindow(NULL);
     wdt->show();
 
+#ifdef __APPLE__
     // prevent macOS from sleep
     IOPMAssertionID assertionID;
     IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep,kIOPMAssertionLevelOn, CFSTR("Describe Activity Type"), &assertionID);
@@ -23,5 +27,8 @@ int main(int argc, char *argv[])
 //        success = IOPMAssertionRelease(assertionID);
             //  The system will be able to sleep again.
     }
+#endif
+
+
     return a.exec();
 }

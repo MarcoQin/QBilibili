@@ -100,7 +100,9 @@ void VRenderer::exitDraw(QPainter &painter)
 void VRenderer::w_draw()
 {
     ++frameCount;
-    double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
+//    double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
+    double dt = ((double)frameTime.elapsed() - lastFrameTiem )/ 1000.0;
+    lastFrameTiem = frameTime.elapsed();
     // mix gl and qpainter
     QPainter painter(this);
     enterDraw(painter);
@@ -145,6 +147,7 @@ void VRenderer::w_draw()
     // qDebug() << pixelsWide << piexelsHigh;
     // qDebug() << width() ;
 
+    LuaManager::instance()->callUpdateFunc(dt);
     LuaManager::instance()->callDrawFunc(painter);
 
 //    painter.drawText(QPoint(30, 50), QString::number(int(fps)) + " FPS");
