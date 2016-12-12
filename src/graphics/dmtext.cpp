@@ -10,6 +10,7 @@ DMText::DMText(QString &text) :
     _color = defaultColor;
     _fontSize = defaultFontSize;
     _font.setPixelSize(_fontSize);
+    caculateRect();
 }
 
 void DMText::draw(QPainter &painter)
@@ -47,4 +48,88 @@ void DMText::caculateRect()
     QFontMetrics fm(_font);
     _width = fm.width(_text);
     _height = fm.height();
+}
+
+void DMText::setPosition(QPointF &pos)
+{
+    // qDebug() << "setPosition: old: " <<  _pos << "new: " << pos;
+    _pos = pos;
+}
+
+QPointF &DMText::getPosition()
+{
+    // qDebug() << "getPosiont" << _pos;
+    return _pos;
+}
+
+void DMText::setColor(QColor &color)
+{
+    _color = color;
+    _color.setAlpha(_alpha);
+}
+
+QColor &DMText::getColor()
+{
+    return _color;
+}
+
+void DMText::setFont(QString &fontFamily)
+{
+    _font.setFamily(fontFamily);
+    caculateRect();
+}
+
+QFont &DMText::getFont()
+{
+    return _font;
+}
+
+void DMText::setOutLIne(bool outLine)
+{
+    _outLine = outLine;
+}
+
+void DMText::setOutLineWidth(int width)
+{
+    outLineWidth = width;
+}
+
+int DMText::width()
+{
+    return _width;
+}
+
+int DMText::height()
+{
+    return _height;
+}
+
+void DMText::setFontSize(int size)
+{
+    _fontSize = size;
+    _font.setPixelSize(_fontSize);
+    caculateRect();
+}
+
+void DMText::setText(QString &text)
+{
+    _text = text;
+    caculateRect();
+}
+
+QString &DMText::getText()
+{
+    return _text;
+}
+
+void DMText::setAlpha(int alpha)
+{
+    _alpha = alpha;
+    _color.setAlpha(_alpha);
+    outLineColor.setAlpha(_alpha);
+}
+
+int DMText::getAlpha()
+{
+    return _alpha;
 }
