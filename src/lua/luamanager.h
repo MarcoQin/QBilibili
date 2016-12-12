@@ -18,6 +18,7 @@ public:
     static LuaManager *instance();
     ~LuaManager();
     void callDrawFunc(QPainter &painter);
+    void callUpdateFunc(double dt);
 private:
     static LuaManager *_instance;
     explicit LuaManager(QObject *parent = 0);
