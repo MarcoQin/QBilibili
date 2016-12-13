@@ -28,10 +28,8 @@ macx{
 SOURCES += \
     src/main.cpp\
     src/vrenderer.cpp \
-    src/popmenu.cpp \
     src/UI/mainwindow.cpp \
     src/UI/mainmenu.cpp \
-    src/UI/processbar.cpp \
     src/UI/floatwidget.cpp \
     src/UI/processbarnew.cpp \
     src/UI/titlebar.cpp \
@@ -51,14 +49,13 @@ SOURCES += \
     src/luasocket/libluasocket/timeout.c \
     src/luasocket/libluasocket/udp.c \
     src/luasocket/luasocket_out.cpp \
-    src/lua/lpack.c
+    src/lua/lpack.c \
+    src/UI/contextmenu.cpp
 
 HEADERS  += \
     src/vrenderer.h \
-    src/popmenu.h \
     src/UI/mainwindow.h \
     src/UI/mainmenu.h \
-    src/UI/processbar.h \
     src/UI/floatwidget.h \
     src/UI/processbarnew.h \
     src/UI/titlebar.h \
@@ -89,7 +86,8 @@ HEADERS  += \
     src/luasocket/libluasocket/tp.lua.h \
     src/luasocket/libluasocket/udp.h \
     src/luasocket/luasocket_out.h \
-    src/lua/lpack.h
+    src/lua/lpack.h \
+    src/UI/contextmenu.h
     src/luasocket/libluasocket/usocket.h \
 
 
