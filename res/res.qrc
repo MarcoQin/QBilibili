@@ -39,5 +39,6 @@
         <file>slider.qss</file>
         <file>vol_slider.qss</file>
         <file>common_button.qss</file>
+        <file>line_edit.qss</file>
     </qresource>
 </RCC>

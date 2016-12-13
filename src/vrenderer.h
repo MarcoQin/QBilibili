@@ -14,6 +14,8 @@ public:
     static VRenderer *instance();
     void enterDraw(QPainter &painter);
     void exitDraw(QPainter &painter);
+public slots:
+    void fileLoaded();  // file loaded, use 60 fps
 protected:
     void paintGL();
 private:

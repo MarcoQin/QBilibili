@@ -1,3 +1,5 @@
+-- class = require('middleclass')
+require('LUBE')
 local http = require('socket.http')
 local md5 = require("md5")
 local SLAXML = require 'slaxml'
@@ -6,7 +8,7 @@ math.random()
 math.random()
 math.random()
 
-function get_live_address(url)
+function get_live_address(url, index)
     local body, headers, code = http.request(url)
     local roomID = 0;
     _,_,_,roomID = string.find(body, "(var ROOMID = )(%d+)(;)")
@@ -19,8 +21,9 @@ function get_live_address(url)
     print(url)
     body, _, _ = http.request(url)
     print(body)
-    url = get_address(body, 1)
+    url = get_address(body, index)
     print("finaly i got: "..url)
+    return url
 end
 
 function get_address(xml, index)
@@ -38,8 +41,8 @@ function get_address(xml, index)
 end
 
 
-local url = "http://live.bilibili.com/1000"
-get_live_address(url)
+-- local url = "http://live.bilibili.com/1000"
+-- get_live_address(url)
 
 -- _type normal is 7
 -- hand shack is 2
@@ -53,7 +56,9 @@ c, error_message = socket.connect("livecmt-2.bilibili.com", 788)
 if (c == nil)  then
     print("connect failed  "..error_message)
 end
+c:settimeout(0)
 s = '{"uid":148386509433407,"roomid":1016}'
+-- s = '{"uid":148386509433407,"roomid":5067}'
 s = make_data(s, 7)
 print(s)
 c:send(s)
@@ -76,15 +81,15 @@ c:send(s1)
 function dd()
 while  true  do
     -- print("prepare for receive")
-    local skt, e, p = c:receive(1024)
-    print(skt)
-    print(e)
-    print(p)
-    if (skt) then  print(skt)  end
-    if (p) then  print(p)  end
-    if (not skt) then break; end
-    if (e) then break; end
+    -- local skt, e, p = c:receive(1024)
+    local skt, e, p = c:receive(8192)
+    -- print(skt)
+    -- print(e)
+    if (skt) then  print("SKT*******"..skt)  end
+    if (#p > 10) then  print(p)  end
+    if (not skt) then print("not skt");break; end
+    if (e) then print(e);break; end
 end -- /while-do
 end
-co = coroutine.create(dd)
-coroutine.resume(co)
+-- co = coroutine.create(dd)
+-- coroutine.resume(co)

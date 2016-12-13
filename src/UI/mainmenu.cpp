@@ -16,7 +16,7 @@ MainMenu::MainMenu(QWidget *parent) :
 
 void MainMenu::setupUI()
 {
-    resize(200, 200);
+    resize(208, 100);
 
     QString commonButtonStyle;
     QFile f(":/qss/common_button.qss");
@@ -31,12 +31,12 @@ void MainMenu::setupUI()
 
     openBtn = new QPushButton(this);
     openBtn->setStyleSheet(commonButtonStyle);
-    openBtn->setGeometry(20, 50, 74, 32);
+    openBtn->setGeometry(20, 100 / 2 - 32 / 2, 74, 32);
     openBtn->setText(tr("Open"));
 
     openURL = new QPushButton(this);
     openURL ->setStyleSheet(commonButtonStyle);
-    openURL ->setGeometry(114, 50, 74, 32);
+    openURL ->setGeometry(114, 100 / 2 - 32 / 2, 74, 32);
     openURL ->setText(tr("Open URL"));
 }
 

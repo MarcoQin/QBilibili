@@ -14,7 +14,7 @@ VRenderer::VRenderer(QWidget *parent)
     frameTime.start();
     // connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(w_draw()));
-    timer.setInterval(17);
+    timer.setInterval(84);
     timer.start();
     _instance = this;
 }
@@ -27,7 +27,7 @@ VRenderer *VRenderer::instance()
 void VRenderer::paintGL()
 {
     // default draw function
-    // make if empty
+    // make it empty
     // to ensure w_draw will be called correctly
 }
 
@@ -45,15 +45,23 @@ void VRenderer::exitDraw(QPainter &painter)
 
 void VRenderer::w_draw()
 {
-    // ++frameCount;
-//    double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
+    ++frameCount;
+    double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
     double dt = ((double)frameTime.elapsed() - lastFrameTiem )/ 1000.0;
     lastFrameTiem = frameTime.elapsed();
     QPainter painter(this);
     enterDraw(painter);
 
+    painter.setPen(QColor(255, 255, 255, 255));
+    painter.drawText(QPoint(30, 50), QString::number(fps));
+
     LuaManager::instance()->callUpdateFunc(dt);
     LuaManager::instance()->callDrawFunc(painter);
 
     exitDraw(painter);
+}
+
+void VRenderer::fileLoaded()
+{
+    timer.setInterval(17);
 }

@@ -1,4 +1,5 @@
-socket = require("socket")
+require("bi")
+--[[socket = require("socket")
 require("bi")
 print("****&*&*&*&*&*&*")
 print(string.pack(">i", 54))
@@ -15,6 +16,9 @@ local body, headers, code = http.request(url)
 print(code)
 print(headers)
 -- print(body)
+]]--
+
+--[[
 local Colors = require("Colors")
 local dm = DMText:new("中文And English Σ(*ﾟдﾟﾉ)")
 local dm1 = DMText:new("English with diffrent color English with diffrent color English with diffrent color English with diffrent color English with diffrent color English with diffrent color English with diffrent color English with diffrent color")
@@ -35,6 +39,7 @@ dm.speed = (w + dm_w) / delay;
 dm1.speed = (w + dm1_w) / delay;
 print(dm.speed)
 print(dm1.speed)
+]]--
 
 function DMText:update(dt)
     local x, y = self:getPosition()
@@ -42,13 +47,14 @@ function DMText:update(dt)
     self:setPosition(x, y);
 end
 function QBDraw(painter)
-    dm:draw(painter)
-    dm1:draw(painter)
+    -- dm:draw(painter)
+    -- dm1:draw(painter)
     -- print("called by parent")
 end
 
 function QBUpdate(dt)
     -- print(dt)
-    dm:update(dt)
-    dm1:update(dt)
+    -- dm:update(dt)
+    -- dm1:update(dt)
+    dd()
 end

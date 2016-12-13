@@ -19,6 +19,7 @@ public:
     ~LuaManager();
     void callDrawFunc(QPainter &painter);
     void callUpdateFunc(double dt);
+    const char *callGetAdressFunc(QString &url, int index);
 private:
     static LuaManager *_instance;
     explicit LuaManager(QObject *parent = 0);

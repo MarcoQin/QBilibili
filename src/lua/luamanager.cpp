@@ -362,3 +362,15 @@ void LuaManager::callUpdateFunc(double dt)
     lua_pushnumber(L, dt);
     lua_call(L, 1, 0);
 }
+
+const char *LuaManager::callGetAdressFunc(QString &url, int index)
+{
+    lua_getglobal(L, "get_live_address");
+    lua_pushstring(L, url.toStdString().c_str());
+    lua_pushnumber(L, index);
+    lua_call(L, 2, 1);
+    const char* u = luaL_checkstring(L, -1);
+    qDebug() << "get: "<< u;
+    lua_pop(L, 1);
+    return u;
+}
