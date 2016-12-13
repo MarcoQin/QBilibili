@@ -7,6 +7,7 @@
 #include "titlebar.h"
 #include "../vrenderer.h"
 #include "mainmenu.h"
+#include "contextmenu.h"
 
 namespace UI {
 
@@ -15,7 +16,6 @@ class MainWindow : public QWidget
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent);
-    void popMenu();
     static constexpr int None = 0x00000000;
     static constexpr int Left = 0x00000001;
     static constexpr int Top = 0x00000002;
@@ -35,6 +35,8 @@ protected:
     virtual void setupUI();
     virtual void showEvent(QShowEvent *event);
 private:
+    bool playerUsing = false;  // if file loaded, this value will be true;
+    ContextMenu *contextMenu;
     void connectSignals();
     QGridLayout *mainLayout;
     VRenderer *vrenderer;

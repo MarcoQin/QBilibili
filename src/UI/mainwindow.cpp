@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
-#include "processbar.h"
 
 using namespace UI;
 
@@ -31,20 +30,22 @@ void MainWindow::setupUI()
     mainLayout->addWidget(vrenderer->widget(), 0, 0);
 
     subtitleEngine = new SubtitleFilter(this);
-    subtitleEngine->setPlayer(player);
-    subtitleEngine->setEngines(QStringList() << "LibASS");
-    subtitleEngine->setAutoLoad(true);
-    subtitleEngine->installTo(player);
-    subtitleEngine->setEnabled(true);
+    // subtitleEngine->setPlayer(player);
+    // subtitleEngine->setEngines(QStringList() << "LibASS");
+    // subtitleEngine->setAutoLoad(true);
+    // subtitleEngine->installTo(player);
+    // subtitleEngine->setEnabled(true);
 
     resize(800, 600);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     processBar = new ProcessBarNew(this);
     titleBar = new TitleBar(this);
-    mainMenu = new MainMenu(this);
+    // mainMenu = new MainMenu(this);
     autoHideTimer = new QTimer(this);
     autoHideTimer->setSingleShot(true);
     autoHideTimer->start(autoHideTimeOut);
+
+    contextMenu = new ContextMenu(this);
 }
 
 
@@ -67,13 +68,17 @@ void MainWindow::connectSignals()
     connect(processBar, SIGNAL(stopTimer()), this, SLOT(stopAutoHideTimer()));
     connect(this, SIGNAL(fullscreenStateChanged(int)), processBar, SLOT(onScreenStateChanged(int)));
 
-    connect(mainMenu, SIGNAL(newFileOpened(QString)), this, SLOT(openNewFile(QString)));
-    connect(mainMenu, SIGNAL(stopTimer()), this, SLOT(stopAutoHideTimer()));
+    // connect(mainMenu, SIGNAL(newFileOpened(QString)), this, SLOT(openNewFile(QString)));
+    // connect(mainMenu, SIGNAL(stopTimer()), this, SLOT(stopAutoHideTimer()));
+
+    connect(contextMenu, SIGNAL(fileOrURLOpened(QString)), this, SLOT(openNewFile(QString)));
+    connect(contextMenu, SIGNAL(stopClicked()), player, SLOT(stop()));
 
     connect(player, SIGNAL(stateChanged(QtAV::AVPlayer::State)), processBar, SLOT(playerStateChanged(QtAV::AVPlayer::State)));
     connect(player, SIGNAL(positionChanged(qint64)), processBar, SLOT(onPositionChanged(qint64)));
     connect(player, SIGNAL(started()), this, SLOT(onStartPlay()));
     connect(player, SIGNAL(loaded()), this, SLOT(fileLoaded()));
+    connect(player, SIGNAL(loaded()), vrenderer, SLOT(fileLoaded()));
 }
 
 void MainWindow::hideCursor()
@@ -88,108 +93,10 @@ void MainWindow::showCursor(QCursor &cursor)
     QApplication::setOverrideCursor(cursor);
 }
 
-
-void MainWindow::popMenu()
-{
-    ShowContextMenu(QPoint(100, 100));
-}
-
-
-class CustomQMenu : public QMenu
-{
-public:
-    CustomQMenu(QWidget *parent = 0) : QMenu (parent){}
-    virtual void mouseReleaseEvent (QMouseEvent *e)
-          {
-            QAction *action = activeAction();
-            if (action && action->isEnabled()) {
-                action->setEnabled(false);
-                QMenu::mouseReleaseEvent(e);
-                action->setEnabled(true);
-                action->trigger();
-            }
-            else
-                QMenu::mouseReleaseEvent(e);
-          }
-    virtual void leaveEvent(QEvent *) {
-        qDebug() << "mouse leave";
-        close();
-    }
-signals:
-    void aboutToHide()
-    {
-        qDebug() << "aboutToHide";
-    }
-};
-
-class Test : public QWidget
-{
-public:
-    Test(QWidget *parent) :
-        QWidget(parent)
-    {
-//        setAutoFillBackground(true);
-//        QPalette palette = this->palette();
-//        palette.setColor(QPalette::Window, Qt::white);
-//        this->setPalette(palette);
-//        219, 199, 188
-        setWindowFlags(Qt::Popup);
-        QHBoxLayout* pLayout = new QHBoxLayout();
-        QLabel *pLabel = new QLabel ("title");
-        pLayout->addWidget (pLabel);
-        QSpinBox *pSpinBox = new QSpinBox(NULL);
-        pLayout->addWidget (pSpinBox);
-        setLayout (pLayout);
-        QLabel *timeT = new QLabel(tr("Time"), this);
-        QLabel *volmT = new QLabel(tr("Volume"), this);
-        QSlider *timeS = new QSlider(this);
-        QSlider *volmS = new QSlider(this);
-        timeS->setOrientation(Qt::Horizontal);
-        volmS->setOrientation(Qt::Horizontal);
-        timeS->setRange(0, 0);
-        volmS->setRange(0, 100);
-        timeS->setValue(0);
-        pLayout->addWidget(timeT);
-        pLayout->addWidget(volmT);
-        pLayout->addWidget(volmS);
-        pLayout->addWidget(timeS);
-        QPushButton *fileB = new QPushButton(this);
-        fileB->setText(tr("Open"));
-        pLayout->addWidget(fileB);
-        QAction *fileA = new QAction(tr("Open File"), this);
-        fileA->setObjectName("File");
-        // connect(fileA, &QAction::triggered, [this](){
-            // QString _file = QFileDialog::getOpenFileName();
-            // qDebug() << _file;
-        // });
-        addAction(fileA);
-        connect(fileB, &QPushButton::clicked, fileA, &QAction::trigger);
-    }
-
-};
-
 void MainWindow::ShowContextMenu(const QPoint &pos)
-    {
-
-        // qDebug()<<":popuprightclickMenu"; //just to see if activated
-//       QMenu contextMenu(tr("Context menu"), this);
-       CustomQMenu contextMenu(this);
-
-//       QAction action1("Remove Data Point", this);
-//       connect(&action1, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
-//       contextMenu.addAction(&action1);
-
-
-//       MainMenu *menuPanel = new MainMenu(this);
-       ProcessBar *menuPanel = new ProcessBar(this);
-       contextMenu.addAction(menuPanel);
-
-
-       contextMenu.setWindowFlags(contextMenu.windowFlags() | Qt::FramelessWindowHint);
-       contextMenu.setAttribute(Qt::WA_TranslucentBackground);
-       contextMenu.setStyleSheet("QMenu{background:rgba(100, 96, 87, 70%);}QLabel{color:rgba(219, 199, 188, 100%);}");
-       contextMenu.exec(mapToGlobal(pos));
-    }
+{
+    contextMenu->exec(mapToGlobal(pos));
+}
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
@@ -288,18 +195,22 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
         }
 
-        if (!processBar->isVisible()) {
-            processBar->show();
-            processBar->resetPosition(this);
+        if (playerUsing) {
+            if (!processBar->isVisible()) {
+                processBar->show();
+                processBar->resetPosition(this);
+            }
         }
+
         if (!titleBar->isVisible()) {
             titleBar->show();
             titleBar->resetPosition(this);
             titleBar->resetSize(this);
         }
+
         showCursor(cursor);
         autoHideTimer->stop();
-        if (!(cur.y() < 12 )) {
+        if (!(cur.y() < 12 ) && playerUsing) {  // 12 pixel for title bar
             autoHideTimer->start(autoHideTimeOut);
         }
     }
@@ -321,7 +232,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if (delta_h < h && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_w = aspectRatio * delta_h;
                     move(global + QPoint((w - delta_w)/2, 0));
                 }
@@ -335,7 +246,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if (delta_w < w && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_h = delta_w / aspectRatio;
                     move(global + QPoint(0, (h - delta_h)/2));
                 }
@@ -349,7 +260,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if (delta_w < w && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_h = delta_w / aspectRatio;
                     move(bottomRightPos - QPoint(delta_w, delta_h) - QPoint(0, (h - delta_h)/2));
                 } else {
@@ -365,7 +276,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if (delta_h < h && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_w = delta_h * aspectRatio;
                     move(bottomRightPos - QPoint(delta_w, delta_h) - QPoint((w - delta_w)/2, 0));
                 } else {
@@ -381,7 +292,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if ((delta_w < w || delta_h < h) && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_w = delta_h * aspectRatio;
                 }
                 move(bottomRightPos - QPoint(delta_w, delta_h));
@@ -395,7 +306,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if ((delta_w < w || delta_h < h) && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_w = delta_h * aspectRatio;
                 }
                 move(global.x() , bottomRightPos.y() - delta_h);
@@ -409,7 +320,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if ((delta_w < w || delta_h < h) && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_w = delta_h * aspectRatio;
                 }
                 move(bottomRightPos.x() - delta_w, global.y());
@@ -423,7 +334,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
                 if ((delta_w < w || delta_h < h) && !canResize) {
                     break;
                 }
-                if (scaleByRatio) {
+                if (scaleByRatio && playerUsing) {
                     delta_w = aspectRatio * delta_h;
                 }
                 resize(delta_w, delta_h);
@@ -444,9 +355,9 @@ void MainWindow::moveEvent(QMoveEvent *event)
     if (titleBar->isVisible()) {
         titleBar->resetPosition(this);
     }
-    if (mainMenu->isVisible()) {
-        mainMenu->resetPosition(this);
-    }
+    // if (mainMenu->isVisible()) {
+        // mainMenu->resetPosition(this);
+    // }
     event->accept();
 }
 
@@ -455,9 +366,9 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     titleBar->resetPosition(this);
     titleBar->resetSize(this);
     processBar->resetPosition(this);
-    if (mainMenu->isVisible()) {
-        mainMenu->resetPosition(this);
-    }
+    // if (mainMenu->isVisible()) {
+        // mainMenu->resetPosition(this);
+    // }
     event->accept();
 }
 
@@ -525,12 +436,21 @@ void MainWindow::fileLoaded()
     videoHeight = player->statistics().video_only.height;
     aspectRatio = 1.0 * videoWidth / videoHeight;
     minWindowWidth = aspectRatio * minWindowHeight;
+    if (videoWidth > 1280) {
+        double ratio = (double)videoWidth / 1280.0;
+        videoWidth /= ratio;
+        videoHeight /= ratio;
+    }
     resize(videoWidth, videoHeight);
     processBar->onStartPlay(player->mediaStartPosition(), player->mediaStopPosition());
 }
 
 void MainWindow::openNewFile(QString fileName)
 {
+    playerUsing = true;
+    if (player->isPlaying() || player->isPaused()) {
+        player->stop();
+    }
     player->setFile(fileName);
     player->load();
     if (autoPlay) {
@@ -540,7 +460,7 @@ void MainWindow::openNewFile(QString fileName)
 
 void MainWindow::showEvent(QShowEvent *event)
 {
-    mainMenu->show();
+    // mainMenu->show();
     event->accept();
 }
 
