@@ -2,9 +2,9 @@
 #include "../graphics/dmtext.h"
 #include <Qt>
 #include <QtCore>
-#include "../luasocket/luasocket_out.h"
+#include "libs/luasocket/luasocket_out.h"
 extern "C"{
-#include "lpack.h"
+#include "libs/lpack.h"
 }
 using namespace std;
 
