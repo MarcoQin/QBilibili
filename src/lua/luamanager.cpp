@@ -6,6 +6,7 @@
 extern "C"{
 #include "lpack.h"
 }
+using namespace std;
 
 
 int l_DMText_constuctor (lua_State *L)
@@ -140,7 +141,27 @@ DMText *l_CheckDMText(lua_State *L, int n)
 
 int l_DMText_destructor(lua_State*L)
 {
-    DMText *dmt = l_CheckDMText(L, 1);
+    DMText *dmt;
+    int luaType = lua_type(L, 1);
+    qDebug() << "about to delete dmt";
+    qDebug() << "luaType is: " << luaType;
+    switch(luaType) {
+        case LUA_TUSERDATA:
+            qDebug() << "LUA_TUSERDATA";
+            dmt = l_CheckDMText_old(L, 1);
+            break;
+        case LUA_TTABLE:
+            qDebug() << "LUA_TTABLE";
+            dmt = l_CheckDMText(L, 1);
+            break;
+    }
+    // try {
+    // } catch(exception e) {
+        // qDebug() << e.what();
+        // dmt = l_CheckDMText_old(L, 1);
+    // }
+    qDebug() << "got dmt";
+    qDebug() << "delete dmt";
     delete dmt;
     return 0;
 }
@@ -166,6 +187,14 @@ int l_DMText_height(lua_State *L)
     DMText *dmt = l_CheckDMText(L, 1);
     int height = dmt->height();
     lua_pushnumber(L, height);
+    return 1;
+}
+
+int l_DMText_getText(lua_State *L)
+{
+    DMText *dmt = l_CheckDMText(L, 1);
+    QString text = dmt->getText();
+    lua_pushstring(L, text.toStdString().c_str());
     return 1;
 }
 
@@ -247,8 +276,9 @@ void RegisterDMText(lua_State *L)
         { "getColor", l_DMText_getColor },
         { "width", l_DMText_width },
         { "height", l_DMText_height },
+        { "getText", l_DMText_getText },
         { "setFontSize", l_DMText_setFontSize },
-        { "__gc", l_DMText_destructor },
+        // { "__gc", l_DMText_destructor },  // I give up __gc... just fuck
         { NULL, NULL }
     };
 
@@ -308,6 +338,16 @@ int setLuaPath( lua_State* L, const char* path )
     return 0; // all done!
 }
 
+extern "C"
+int lua_getWindowSize(lua_State *L)
+{
+    QSize size = LuaManager::instance()->getWindowSize();
+    lua_pushnumber(L, size.width());
+    lua_pushnumber(L, size.height());
+    // Let Lua know how many return values we've passed
+    return 2;
+}
+
 LuaManager *LuaManager::_instance = nullptr;
 
 LuaManager *LuaManager::instance()
@@ -323,6 +363,7 @@ LuaManager::LuaManager(QObject *parent) : QObject(parent)
     RegisterDMText(L);
     love::luasocket::__open(L);
     luaopen_pack(L);
+    lua_register(L, "getWindowSize", lua_getWindowSize);
 
     qDebug() << QDir::currentPath();
     qDebug() << QCoreApplication::applicationDirPath();
@@ -365,7 +406,8 @@ void LuaManager::callUpdateFunc(double dt)
 
 const char *LuaManager::callGetAdressFunc(QString &url, int index)
 {
-    lua_getglobal(L, "get_live_address");
+    // lua_getglobal(L, "get_live_address");
+    lua_getglobal(L, "QBGetLiveAdress");
     lua_pushstring(L, url.toStdString().c_str());
     lua_pushnumber(L, index);
     lua_call(L, 2, 1);
@@ -373,4 +415,16 @@ const char *LuaManager::callGetAdressFunc(QString &url, int index)
     qDebug() << "get: "<< u;
     lua_pop(L, 1);
     return u;
+}
+
+void LuaManager::setWindowSize(int width, int height)
+{
+    windowWidth = width;
+    windowHeight = height;
+}
+
+QSize &LuaManager::getWindowSize()
+{
+    QSize *size = new QSize(windowWidth, windowHeight);
+    return *size;
 }

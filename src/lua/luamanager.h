@@ -20,10 +20,13 @@ public:
     void callDrawFunc(QPainter &painter);
     void callUpdateFunc(double dt);
     const char *callGetAdressFunc(QString &url, int index);
+    void setWindowSize(int width, int height);
+    QSize &getWindowSize();
 private:
     static LuaManager *_instance;
     explicit LuaManager(QObject *parent = 0);
     lua_State *L;
+    int windowWidth, windowHeight;
 
 signals:
 
