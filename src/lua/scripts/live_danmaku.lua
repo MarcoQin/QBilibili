@@ -1,9 +1,9 @@
-local JSON = require('JSON')
-require('blue')
+local blue = require('blue')
 local class = require('middleclass')
 local md5 = require("md5")
 local http = require('socket.http')
 local SLAXML = require 'slaxml'
+
 math.randomseed(os.time())
 math.random()
 math.random()
@@ -229,9 +229,9 @@ function LiveDanmaku:new_damaku_received(data)
         if out:find("DANMU_MSG") == nil then
             break
         end
-        print("get JSON string:---->"..out)
+        print("get json string:---->"..out)
         local func = function()
-            local obj = JSON:decode(out)
+            local obj = cjson.decode(out)
             local cmd = obj.cmd
             if (cmd and cmd == "DANMU_MSG") then
                 local info = obj.info
@@ -271,40 +271,6 @@ function LiveDanmaku:new_damaku_received(data)
     end
 
     end
-    --[[
-    for k in data:gmatch("({[^\x00].-})") do
-        print(k)
-        local func = function()
-            local obj = JSON:decode(k)
-            local cmd = obj.cmd
-            if (cmd and cmd == "DANMU_MSG") then
-                local info = obj.info
-                if (info) then
-                    if (#info >= 3) then
-                        local danmaku_info = info[1]
-                        local fontSize = danmaku_info[3]
-                        local color = danmaku_info[4]
-                        local content = info[2]
-                        local u_info = info[3]
-                        local u_name = ""
-                        if (u_info and #u_info >= 2) then
-                            u_name = u_info[2]
-                        end
-                        local dm = DMText:new(content)
-                        dm:setPosition(w, 50)
-                        dm:setColor(self:intToRGB(color))
-                        dm:setAlpha(150)
-                        local dm_w = dm:width()
-                        local delay = 10;
-                        dm.speed = (w + dm_w) / delay;
-                        table.insert(self.danmaku, dm)
-                    end
-                end
-            end
-        end
-        local ret, err = pcall(func)
-    end
-    ]]--
 end
 
 function LiveDanmaku:draw(painter)

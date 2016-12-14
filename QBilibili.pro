@@ -51,9 +51,9 @@ SOURCES += \
     src/lua/libs/luasocket/luasocket_out.cpp \
     src/lua/libs/lpack.c \
     src/UI/contextmenu.cpp \
-    src/lua/libs/lua-cjson/dtoa.c \
+#    src/lua/libs/lua-cjson/dtoa.c \
     src/lua/libs/lua-cjson/fpconv.c \
-    src/lua/libs/lua-cjson/g_fmt.c \
+#    src/lua/libs/lua-cjson/g_fmt.c \
     src/lua/libs/lua-cjson/lua_cjson.c \
     src/lua/libs/lua-cjson/strbuf.c
 

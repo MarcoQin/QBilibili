@@ -53,6 +53,10 @@
 #define CJSON_VERSION   "2.1devel"
 #endif
 
+#ifndef ENABLE_CJSON_GLOBAL
+#define ENABLE_CJSON_GLOBAL
+#endif
+
 
 /* Workaround for Solaris platforms missing isinf() */
 #if !defined(isinf) && (defined(USE_INTERNAL_ISINF) || defined(MISSING_ISINF))

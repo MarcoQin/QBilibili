@@ -174,5 +174,6 @@ function tcpClient:setoption(option, value)
     end
 end
 
-blue = {}
+local blue = {}
 blue.tcpClient = tcpClient
+return blue

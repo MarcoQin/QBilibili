@@ -41,6 +41,24 @@ print(dm.speed)
 print(dm1.speed)
 ]]--
 
+--[[
+local text = '{"info":[[0,1,25,16777215,1481644422,2114849008,0,"5d6ed2f6",0],"110",[19858282,"晓风残月泣",0,0,0,10000,1],[10,"坂粉","坂本叔",1000,11433699],[20,0,6215679,">50000"],["title-75-1","title-75-1"],0,0],"cmd":"DANMU_MSG"}'
+local v = cjson.decode(text)
+function pp(t)
+    if (type(t) == "table") then
+        for k, v in pairs(t) do
+            print(k.." ---> " .. tostring(v))
+            if type(v) == "table" then
+                pp(v)
+            end
+        end
+    else
+        print("-->" .. t)
+    end
+end
+pp(v)
+]]--
+
 local LiveDanmaku = require('live_danmaku')
 
 local liveDanmakuInstance = nil
