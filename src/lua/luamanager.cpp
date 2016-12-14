@@ -5,6 +5,7 @@
 #include "libs/luasocket/luasocket_out.h"
 extern "C"{
 #include "libs/lpack.h"
+#include "libs/lua-cjson/lua_cjson.h"
 }
 using namespace std;
 
@@ -361,8 +362,9 @@ LuaManager::LuaManager(QObject *parent) : QObject(parent)
     L = luaL_newstate();
     luaL_openlibs(L);
     RegisterDMText(L);
-    love::luasocket::__open(L);
-    luaopen_pack(L);
+    love::luasocket::__open(L);  // luasocket
+    luaopen_pack(L);             // lpack
+    luaopen_cjson(L);            // lua-cjson
     lua_register(L, "getWindowSize", lua_getWindowSize);
 
     qDebug() << QDir::currentPath();

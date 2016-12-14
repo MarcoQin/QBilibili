@@ -50,7 +50,12 @@ SOURCES += \
     src/lua/libs/luasocket/libluasocket/udp.c \
     src/lua/libs/luasocket/luasocket_out.cpp \
     src/lua/libs/lpack.c \
-    src/UI/contextmenu.cpp
+    src/UI/contextmenu.cpp \
+    src/lua/libs/lua-cjson/dtoa.c \
+    src/lua/libs/lua-cjson/fpconv.c \
+    src/lua/libs/lua-cjson/g_fmt.c \
+    src/lua/libs/lua-cjson/lua_cjson.c \
+    src/lua/libs/lua-cjson/strbuf.c
 
 HEADERS  += \
     src/vrenderer.h \
@@ -87,7 +92,11 @@ HEADERS  += \
     src/lua/libs/luasocket/libluasocket/udp.h \
     src/lua/libs/luasocket/luasocket_out.h \
     src/lua/libs/lpack.h \
-    src/UI/contextmenu.h
+    src/UI/contextmenu.h \
+    src/lua/libs/lua-cjson/dtoa_config.h \
+    src/lua/libs/lua-cjson/fpconv.h \
+    src/lua/libs/lua-cjson/lua_cjson.h \
+    src/lua/libs/lua-cjson/strbuf.h
     src/lua/libs/luasocket/libluasocket/usocket.h \
 
 
