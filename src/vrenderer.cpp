@@ -45,9 +45,10 @@ void VRenderer::exitDraw(QPainter &painter)
 
 void VRenderer::w_draw()
 {
-    ++frameCount;
-    double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
+    // ++frameCount;
+    // double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
     double dt = ((double)frameTime.elapsed() - lastFrameTiem )/ 1000.0;
+    double fps = 1.0 / dt;
     lastFrameTiem = frameTime.elapsed();
     QPainter painter(this);
     enterDraw(painter);

@@ -1,5 +1,5 @@
 -- class = require('middleclass')
-require('LUBE')
+-- require('LUBE')
 local http = require('socket.http')
 local md5 = require("md5")
 local SLAXML = require 'slaxml'
@@ -57,7 +57,9 @@ if (c == nil)  then
     print("connect failed  "..error_message)
 end
 c:settimeout(0)
-s = '{"uid":148386509433407,"roomid":1016}'
+-- s = '{"uid":148386509433407,"roomid":1016}'
+s = '{"uid":148386509433407,"roomid":39936}'
+s = '{"uid":263172571157652,"roomid":39936}'
 -- s = '{"uid":148386509433407,"roomid":5067}'
 s = make_data(s, 7)
 print(s)

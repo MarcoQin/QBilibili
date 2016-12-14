@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
+#include "../lua/luamanager.h"
 
 using namespace UI;
 
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupUI();
 
     connectSignals();
+    LuaManager::instance()->setWindowSize(width(), height());
 }
 
 void MainWindow::setupUI()
@@ -369,6 +371,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     // if (mainMenu->isVisible()) {
         // mainMenu->resetPosition(this);
     // }
+    LuaManager::instance()->setWindowSize(width(), height());
     event->accept();
 }
 

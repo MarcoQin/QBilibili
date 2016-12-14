@@ -41,6 +41,17 @@ print(dm.speed)
 print(dm1.speed)
 ]]--
 
+local LiveDanmaku = require('live_danmaku')
+
+local liveDanmakuInstance = nil
+
+function QBGetLiveAdress(url, index)
+    liveDanmakuInstance = LiveDanmaku(url)
+    return liveDanmakuInstance:get_live_address(url, index)
+    -- local l = LiveDanmaku(url)
+    -- return l:get_live_address(url, index)
+end
+
 function DMText:update(dt)
     local x, y = self:getPosition()
     x = x - self.speed * dt
@@ -50,11 +61,17 @@ function QBDraw(painter)
     -- dm:draw(painter)
     -- dm1:draw(painter)
     -- print("called by parent")
+    if (liveDanmakuInstance ~= nil) then
+        liveDanmakuInstance:draw(painter)
+    end
 end
 
 function QBUpdate(dt)
     -- print(dt)
     -- dm:update(dt)
     -- dm1:update(dt)
-    dd()
+    -- dd()
+    if (liveDanmakuInstance ~= nil) then
+        liveDanmakuInstance:update(dt)
+    end
 end
