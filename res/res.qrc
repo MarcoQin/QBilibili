@@ -41,5 +41,6 @@
         <file>vol_slider.qss</file>
         <file>common_button.qss</file>
         <file>line_edit.qss</file>
+        <file>tabbar.qss</file>
     </qresource>
 </RCC>
