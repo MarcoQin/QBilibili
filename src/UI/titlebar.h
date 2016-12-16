@@ -23,9 +23,9 @@ protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
 private:
     int barHidht = 20;
-    QPushButton *close;
-    QPushButton *max;
-    QPushButton *min;
+    QPushButton *closeBtn;
+    QPushButton *maxBtn;
+    QPushButton *minBtn;
 };
 
 }

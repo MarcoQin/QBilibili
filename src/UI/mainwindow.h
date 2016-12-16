@@ -8,6 +8,7 @@
 #include "../vrenderer.h"
 #include "mainmenu.h"
 #include "contextmenu.h"
+#include "../browser/browserwidget.h"
 
 namespace UI {
 
@@ -36,6 +37,7 @@ protected:
     virtual void showEvent(QShowEvent *event);
 private:
     bool playerUsing = false;  // if file loaded, this value will be true;
+    BrowserWidget *browserWidget;
     ContextMenu *contextMenu;
     void connectSignals();
     QGridLayout *mainLayout;
@@ -75,6 +77,7 @@ private slots:
     void openNewFile(QString fileName);
     void stopAutoHideTimer();
     void maxmizeWindow();
+    void closeWindow();
 };
 
 }

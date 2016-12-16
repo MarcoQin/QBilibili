@@ -48,6 +48,9 @@ void MainWindow::setupUI()
     autoHideTimer->start(autoHideTimeOut);
 
     contextMenu = new ContextMenu(this);
+
+    browserWidget = new BrowserWidget(this);
+    browserWidget->loadHomePage();
 }
 
 
@@ -59,7 +62,8 @@ void MainWindow::connectSignals()
     connect(autoHideTimer, SIGNAL(timeout()), titleBar, SLOT(hide()));
     connect(autoHideTimer, SIGNAL(timeout()), this, SLOT(hideCursor()));
 
-    connect(titleBar, SIGNAL(closeClicked()), this, SLOT(close()));
+//    connect(titleBar, SIGNAL(closeClicked()), this, SLOT(close()));
+    connect(titleBar, SIGNAL(closeClicked()), this, SLOT(closeWindow()));
     connect(titleBar, SIGNAL(minClicked()), this, SLOT(setMinimumWindow()));
     connect(titleBar, SIGNAL(maxClicked()), this, SLOT(toggleFullScreen()));
     connect(titleBar, SIGNAL(requetMaxmiumWindow()), this, SLOT(maxmizeWindow()));
@@ -361,6 +365,9 @@ void MainWindow::moveEvent(QMoveEvent *event)
     // if (mainMenu->isVisible()) {
         // mainMenu->resetPosition(this);
     // }
+    if (browserWidget->isVisible()) {
+        browserWidget->resetPosition(this);
+    }
     event->accept();
 }
 
@@ -372,6 +379,10 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     // if (mainMenu->isVisible()) {
         // mainMenu->resetPosition(this);
     // }
+    if (browserWidget->isVisible()) {
+        browserWidget->resetPosition(this);
+        browserWidget->resetSize(this);
+    }
     LuaManager::instance()->setWindowSize(width(), height());
     event->accept();
 }
@@ -394,6 +405,7 @@ void MainWindow::setMinimumWindow()
 {
     titleBar->hide();
     processBar->hide();
+    browserWidget->hide();
     setWindowState(Qt::WindowMinimized);
 }
 
@@ -465,6 +477,9 @@ void MainWindow::openNewFile(QString fileName)
 void MainWindow::showEvent(QShowEvent *event)
 {
     // mainMenu->show();
+    browserWidget->show();
+    browserWidget->resetPosition(this);
+    browserWidget->resetSize(this);
     event->accept();
 }
 
@@ -476,4 +491,11 @@ void MainWindow::stopAutoHideTimer()
 void MainWindow::maxmizeWindow()
 {
     setWindowState(Qt::WindowMaximized);
+}
+
+void MainWindow::closeWindow()
+{
+    browserWidget->close();
+    titleBar->close();
+    close();
 }

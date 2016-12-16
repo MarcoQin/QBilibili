@@ -4,6 +4,8 @@
 #include "../UI/floatwidget.h"
 #include <QObject>
 
+class TabWidget;
+
 namespace UI {
 
 class BrowserWidget : public FloatWidget
@@ -12,9 +14,16 @@ class BrowserWidget : public FloatWidget
 public:
     explicit BrowserWidget(QWidget *parent);
     void resetSize(QWidget *parent);
+
+    TabWidget *tabWidget() const;
+
+    void loadPage(const QString &url);
+    void loadPage(const QUrl &url);
+    void loadHomePage();
 private:
     void setupUI();
-    int titleOffset = -20;
+    int titleOffset = 20;
+    TabWidget *m_tabWidget;
 };
 
 }
