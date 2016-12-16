@@ -1,6 +1,7 @@
 #include "webpage.h"
 
-WebPage::WebPage()
+WebPage::WebPage(QWebEngineProfile *profile, QObject *parent):
+    QWebEnginePage(profile, parent)
 {
 
 }

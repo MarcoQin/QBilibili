@@ -5,7 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui \
-            avwidgets
+            avwidgets \
+            webenginewidgets \
+            network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -55,7 +57,10 @@ SOURCES += \
     src/lua/libs/lua-cjson/fpconv.c \
 #    src/lua/libs/lua-cjson/g_fmt.c \
     src/lua/libs/lua-cjson/lua_cjson.c \
-    src/lua/libs/lua-cjson/strbuf.c
+    src/lua/libs/lua-cjson/strbuf.c \
+    src/browser/browserwidget.cpp \
+    src/browser/webview.cpp \
+    src/browser/webpage.cpp
 
 HEADERS  += \
     src/vrenderer.h \
@@ -96,7 +101,10 @@ HEADERS  += \
     src/lua/libs/lua-cjson/dtoa_config.h \
     src/lua/libs/lua-cjson/fpconv.h \
     src/lua/libs/lua-cjson/lua_cjson.h \
-    src/lua/libs/lua-cjson/strbuf.h
+    src/lua/libs/lua-cjson/strbuf.h \
+    src/browser/browserwidget.h \
+    src/browser/webview.h \
+    src/browser/webpage.h
     src/lua/libs/luasocket/libluasocket/usocket.h \
 
 

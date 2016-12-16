@@ -53,3 +53,9 @@ void TitleBar::mouseMoveEvent(QMouseEvent *event)
     QMouseEvent* eventCopy = new QMouseEvent(*event);
     QApplication::instance()->postEvent(parent(), eventCopy);
 }
+
+void TitleBar::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    emit requetMaxmiumWindow();
+    event->accept();
+}

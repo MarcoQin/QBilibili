@@ -74,6 +74,7 @@ private slots:
     void fileLoaded();
     void openNewFile(QString fileName);
     void stopAutoHideTimer();
+    void maxmizeWindow();
 };
 
 }

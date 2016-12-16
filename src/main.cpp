@@ -12,7 +12,14 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // for webengine developer tools
+    qputenv("QTWEBENGINE_REMOTE_DEBUGGING", "9137");
+
     QApplication a(argc, argv);
+
+    a.setWindowIcon(QIcon(":/Picture/icon.png"));
+
     LuaManager::instance();
     UI::MainWindow *wdt = new UI::MainWindow(NULL);
     wdt->show();

@@ -34,6 +34,7 @@
         <file>vol_low.png</file>
         <file>vol_mid.png</file>
         <file>vol_no.png</file>
+        <file>icon.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>slider.qss</file>

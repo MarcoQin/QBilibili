@@ -250,7 +250,7 @@ function LiveDanmaku:new_damaku_received(data)
                         local y = self:getYPosition()
                         dm:setPosition(w, y)
                         dm:setColor(self:intToRGB(color))
-                        dm:setAlpha(150)
+                        dm:setAlpha(200)
                         local dm_w = dm:width()
                         local delay = 10;
                         dm.speed = (w + dm_w) / delay;

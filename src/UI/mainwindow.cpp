@@ -62,6 +62,7 @@ void MainWindow::connectSignals()
     connect(titleBar, SIGNAL(closeClicked()), this, SLOT(close()));
     connect(titleBar, SIGNAL(minClicked()), this, SLOT(setMinimumWindow()));
     connect(titleBar, SIGNAL(maxClicked()), this, SLOT(toggleFullScreen()));
+    connect(titleBar, SIGNAL(requetMaxmiumWindow()), this, SLOT(maxmizeWindow()));
 
     connect(processBar, SIGNAL(toggleFullScreen()), this, SLOT(toggleFullScreen()));
     connect(processBar, SIGNAL(playButtonClicked()), this, SLOT(playOrPause()));
@@ -470,4 +471,9 @@ void MainWindow::showEvent(QShowEvent *event)
 void MainWindow::stopAutoHideTimer()
 {
     autoHideTimer->stop();
+}
+
+void MainWindow::maxmizeWindow()
+{
+    setWindowState(Qt::WindowMaximized);
 }
