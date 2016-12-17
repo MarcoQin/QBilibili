@@ -1,10 +1,12 @@
 #include "browserwidget.h"
 #include "tabwidget.h"
+#include "webview.h"
 
 using namespace UI;
 
 BrowserWidget::BrowserWidget(QWidget *parent) :
     FloatWidget(parent)
+//    QWidget(parent)
 {
     setupUI();
     setMouseTracking(true);

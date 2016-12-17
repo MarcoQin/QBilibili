@@ -8,10 +8,11 @@
 #include "../vrenderer.h"
 #include "mainmenu.h"
 #include "contextmenu.h"
-#include "../browser/browserwidget.h"
+
 
 namespace UI {
 
+class BrowserWidget;
 class MainWindow : public QWidget
 {
     Q_OBJECT

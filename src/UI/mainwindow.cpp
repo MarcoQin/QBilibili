@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
 #include "../lua/luamanager.h"
+#include "../browser/browserwidget.h"
+#include "../browser/tabwidget.h"
+#include "../browser/webview.h"
 
 using namespace UI;
 
@@ -50,7 +53,7 @@ void MainWindow::setupUI()
     contextMenu = new ContextMenu(this);
 
     browserWidget = new BrowserWidget(this);
-    browserWidget->loadHomePage();
+//    browserWidget->loadHomePage();
 }
 
 
@@ -80,12 +83,34 @@ void MainWindow::connectSignals()
 
     connect(contextMenu, SIGNAL(fileOrURLOpened(QString)), this, SLOT(openNewFile(QString)));
     connect(contextMenu, SIGNAL(stopClicked()), player, SLOT(stop()));
+    connect(contextMenu, &ContextMenu::showWebBrowser, [this](){
+        this->browserWidget->show();
+        this->browserWidget->resetSize(this);
+        this->browserWidget->resetPosition(this);
+    });
 
     connect(player, SIGNAL(stateChanged(QtAV::AVPlayer::State)), processBar, SLOT(playerStateChanged(QtAV::AVPlayer::State)));
     connect(player, SIGNAL(positionChanged(qint64)), processBar, SLOT(onPositionChanged(qint64)));
     connect(player, SIGNAL(started()), this, SLOT(onStartPlay()));
     connect(player, SIGNAL(loaded()), this, SLOT(fileLoaded()));
     connect(player, SIGNAL(loaded()), vrenderer, SLOT(fileLoaded()));
+
+
+    QAction *playCurrentLive = new QAction(this);
+    QList<QKeySequence> shortcuts;
+    shortcuts.append(QKeySequence(Qt::CTRL + Qt::Key_E));
+    playCurrentLive->setShortcuts(shortcuts);
+    connect(playCurrentLive, &QAction::triggered, [this](){
+        QUrl url = browserWidget->tabWidget()->currentWebView()->url();
+        if (!url.isEmpty()){
+            browserWidget->hide();
+            qDebug() << url;
+            QString s = url.toString();
+            const char *u = LuaManager::instance()->callGetAdressFunc(s, 1);
+            openNewFile(u);
+        }
+    });
+    addAction(playCurrentLive);
 }
 
 void MainWindow::hideCursor()
@@ -477,9 +502,9 @@ void MainWindow::openNewFile(QString fileName)
 void MainWindow::showEvent(QShowEvent *event)
 {
     // mainMenu->show();
-    browserWidget->show();
-    browserWidget->resetPosition(this);
-    browserWidget->resetSize(this);
+//    browserWidget->show();
+//    browserWidget->resetPosition(this);
+//    browserWidget->resetSize(this);
     event->accept();
 }
 

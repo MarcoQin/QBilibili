@@ -32,6 +32,7 @@ public:
 signals:
     void fileOrURLOpened(QString fileName);
     void stopClicked();
+    void showWebBrowser();
 
 protected:
 
@@ -45,6 +46,7 @@ private:
     QAction *open;
     QAction *openURL;
     QAction *stop;
+    QAction *showBrowser;
 private slots:
     void openFile();
     void openURLClicked();

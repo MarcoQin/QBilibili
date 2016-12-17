@@ -9,6 +9,7 @@ class TabWidget;
 namespace UI {
 
 class BrowserWidget : public FloatWidget
+//class BrowserWidget : public QWidget
 {
     Q_OBJECT
 public:
