@@ -45,16 +45,14 @@ void VRenderer::exitDraw(QPainter &painter)
 
 void VRenderer::w_draw()
 {
-    // ++frameCount;
-    // double fps = frameCount / ((double)frameTime.elapsed() / 1000.0);
     double dt = ((double)frameTime.elapsed() - lastFrameTiem )/ 1000.0;
-    double fps = 1.0 / dt;
+    // double fps = 1.0 / dt;
     lastFrameTiem = frameTime.elapsed();
     QPainter painter(this);
     enterDraw(painter);
 
     painter.setPen(QColor(255, 255, 255, 255));
-    painter.drawText(QPoint(30, 50), QString::number(fps));
+    // painter.drawText(QPoint(30, 50), QString::number(fps));
 
     LuaManager::instance()->callUpdateFunc(dt);
     LuaManager::instance()->callDrawFunc(painter);
