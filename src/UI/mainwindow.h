@@ -12,7 +12,7 @@
 
 namespace UI {
 
-class BrowserWidget;
+// class BrowserWidget;
 class MainWindow : public QWidget
 {
     Q_OBJECT
@@ -38,7 +38,7 @@ protected:
     virtual void showEvent(QShowEvent *event);
 private:
     bool playerUsing = false;  // if file loaded, this value will be true;
-    BrowserWidget *browserWidget;
+    // BrowserWidget *browserWidget;
     ContextMenu *contextMenu;
     void connectSignals();
     QGridLayout *mainLayout;

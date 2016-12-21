@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "mainmenu.h"
 #include "../lua/luamanager.h"
-#include "../browser/browserwidget.h"
-#include "../browser/tabwidget.h"
-#include "../browser/webview.h"
+// #include "../browser/browserwidget.h"
+// #include "../browser/tabwidget.h"
+// #include "../browser/webview.h"
 
 using namespace UI;
 
@@ -52,7 +52,7 @@ void MainWindow::setupUI()
 
     contextMenu = new ContextMenu(this);
 
-    browserWidget = new BrowserWidget(this);
+    // browserWidget = new BrowserWidget(this);
 //    browserWidget->loadHomePage();
 }
 
@@ -83,11 +83,11 @@ void MainWindow::connectSignals()
 
     connect(contextMenu, SIGNAL(fileOrURLOpened(QString)), this, SLOT(openNewFile(QString)));
     connect(contextMenu, SIGNAL(stopClicked()), player, SLOT(stop()));
-    connect(contextMenu, &ContextMenu::showWebBrowser, [this](){
-        this->browserWidget->show();
-        this->browserWidget->resetSize(this);
-        this->browserWidget->resetPosition(this);
-    });
+    // connect(contextMenu, &ContextMenu::showWebBrowser, [this](){
+        // this->browserWidget->show();
+        // this->browserWidget->resetSize(this);
+        // this->browserWidget->resetPosition(this);
+    // });
 
     connect(player, SIGNAL(stateChanged(QtAV::AVPlayer::State)), processBar, SLOT(playerStateChanged(QtAV::AVPlayer::State)));
     connect(player, SIGNAL(positionChanged(qint64)), processBar, SLOT(onPositionChanged(qint64)));
@@ -100,16 +100,16 @@ void MainWindow::connectSignals()
     QList<QKeySequence> shortcuts;
     shortcuts.append(QKeySequence(Qt::CTRL + Qt::Key_E));
     playCurrentLive->setShortcuts(shortcuts);
-    connect(playCurrentLive, &QAction::triggered, [this](){
-        QUrl url = browserWidget->tabWidget()->currentWebView()->url();
-        if (!url.isEmpty()){
-            browserWidget->hide();
-            qDebug() << url;
-            QString s = url.toString();
-            const char *u = LuaManager::instance()->callGetAdressFunc(s, 1);
-            openNewFile(u);
-        }
-    });
+    // connect(playCurrentLive, &QAction::triggered, [this](){
+        // QUrl url = browserWidget->tabWidget()->currentWebView()->url();
+        // if (!url.isEmpty()){
+            // browserWidget->hide();
+            // qDebug() << url;
+            // QString s = url.toString();
+            // const char *u = LuaManager::instance()->callGetAdressFunc(s, 1);
+            // openNewFile(u);
+        // }
+    // });
     addAction(playCurrentLive);
 }
 
@@ -390,9 +390,9 @@ void MainWindow::moveEvent(QMoveEvent *event)
     // if (mainMenu->isVisible()) {
         // mainMenu->resetPosition(this);
     // }
-    if (browserWidget->isVisible()) {
-        browserWidget->resetPosition(this);
-    }
+    // if (browserWidget->isVisible()) {
+        // browserWidget->resetPosition(this);
+    // }
     event->accept();
 }
 
@@ -404,10 +404,10 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     // if (mainMenu->isVisible()) {
         // mainMenu->resetPosition(this);
     // }
-    if (browserWidget->isVisible()) {
-        browserWidget->resetPosition(this);
-        browserWidget->resetSize(this);
-    }
+    // if (browserWidget->isVisible()) {
+        // browserWidget->resetPosition(this);
+        // browserWidget->resetSize(this);
+    // }
     LuaManager::instance()->setWindowSize(width(), height());
     event->accept();
 }
@@ -430,7 +430,7 @@ void MainWindow::setMinimumWindow()
 {
     titleBar->hide();
     processBar->hide();
-    browserWidget->hide();
+    // browserWidget->hide();
     setWindowState(Qt::WindowMinimized);
 }
 
@@ -520,7 +520,7 @@ void MainWindow::maxmizeWindow()
 
 void MainWindow::closeWindow()
 {
-    browserWidget->close();
+    // browserWidget->close();
     titleBar->close();
     close();
 }

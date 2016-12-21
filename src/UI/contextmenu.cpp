@@ -28,8 +28,8 @@ void ContextMenu::setupUI()
     stop = new QAction("Stop", this);
     this->addAction(stop);
 
-    showBrowser = new QAction("ShowBrowser", this);
-    this->addAction(showBrowser);
+    // showBrowser = new QAction("ShowBrowser", this);
+    // this->addAction(showBrowser);
 
     urlDialog = new URLDialog();
 }
@@ -43,7 +43,7 @@ void ContextMenu::connectSignals()
     connect(openURL, SIGNAL(triggered()), this, SLOT(openURLClicked()));
     connect(urlDialog, SIGNAL(URLOpened(QString)), this, SIGNAL(fileOrURLOpened(QString)));
 
-    connect(showBrowser, SIGNAL(triggered(bool)), this, SIGNAL(showWebBrowser()));
+    // connect(showBrowser, SIGNAL(triggered(bool)), this, SIGNAL(showWebBrowser()));
 }
 
 void ContextMenu::openFile()

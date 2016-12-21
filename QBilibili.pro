@@ -6,8 +6,8 @@
 
 QT       += core gui \
             avwidgets \
-            webenginewidgets \
-            network
+#            webenginewidgets \
+#            network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -58,10 +58,10 @@ SOURCES += \
 #    src/lua/libs/lua-cjson/g_fmt.c \
     src/lua/libs/lua-cjson/lua_cjson.c \
     src/lua/libs/lua-cjson/strbuf.c \
-    src/browser/browserwidget.cpp \
-    src/browser/webview.cpp \
-    src/browser/webpage.cpp \
-    src/browser/tabwidget.cpp
+#    src/browser/browserwidget.cpp \
+#    src/browser/webview.cpp \
+#    src/browser/webpage.cpp \
+#    src/browser/tabwidget.cpp
 
 HEADERS  += \
     src/vrenderer.h \
@@ -103,10 +103,10 @@ HEADERS  += \
     src/lua/libs/lua-cjson/fpconv.h \
     src/lua/libs/lua-cjson/lua_cjson.h \
     src/lua/libs/lua-cjson/strbuf.h \
-    src/browser/browserwidget.h \
-    src/browser/webview.h \
-    src/browser/webpage.h \
-    src/browser/tabwidget.h
+#    src/browser/browserwidget.h \
+#    src/browser/webview.h \
+#    src/browser/webpage.h \
+#    src/browser/tabwidget.h
     src/lua/libs/luasocket/libluasocket/usocket.h \
 
 
