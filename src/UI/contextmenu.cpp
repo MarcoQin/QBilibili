@@ -2,9 +2,29 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include "../lua/luamanager.h"
 
 using namespace UI;
+
+
+
+template<typename Out>
+void split(const std::string &s, char delim, Out result) {
+    std::stringstream ss;
+    ss.str(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        *(result++) = item;
+    }
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, std::back_inserter(elems));
+    return elems;
+}
 
 ContextMenu::ContextMenu(QWidget *parent) :
     QMenu(parent)
@@ -131,7 +151,16 @@ void URLDialog::okBtnClicked()
     QString s = url->text();
     if (!s.isEmpty()) {
         qDebug() << s;
-        const char *u = LuaManager::instance()->callGetAdressFunc(s, 1);
+        std::string s_copy = s.toStdString();
+        int liveIndex = 1;
+        if (s_copy.rfind(" ")) {
+            std::vector<std::string> r = split(s_copy, ' ');
+            if (r.size() > 1) {
+                liveIndex = std::stoi(static_cast<std::string>(r.at(1)));
+            }
+            s = QString(static_cast<std::string>(r.at(0)).c_str());
+        }
+        const char *u = LuaManager::instance()->callGetAdressFunc(s, liveIndex);
         qDebug() << "here";
         qDebug() << u;
         emit URLOpened(u);
