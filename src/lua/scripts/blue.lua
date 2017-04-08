@@ -154,7 +154,7 @@ function tcpClient:_receive()
         -- if (skt) then
             -- print("SKT*******"..skt)
         -- end
-        if (#p > 10) then
+        if (p and #p > 10) then
             packet = packet .. p
             -- print("#p    ::::"..p)
         end
