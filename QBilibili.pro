@@ -62,6 +62,8 @@ SOURCES += \
 #    src/browser/webview.cpp \
 #    src/browser/webpage.cpp \
 #    src/browser/tabwidget.cpp
+    src/lua/encryption/QLuaLoader.cpp \
+    src/lua/encryption/xxtea.cpp
 
 HEADERS  += \
     src/vrenderer.h \
@@ -108,6 +110,8 @@ HEADERS  += \
 #    src/browser/webpage.h \
 #    src/browser/tabwidget.h
     src/lua/libs/luasocket/libluasocket/usocket.h \
+    src/lua/encryption/QLuaLoader.h \
+    src/lua/encryption/xxtea.h
 
 
 win32{

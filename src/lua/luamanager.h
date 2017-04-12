@@ -25,6 +25,7 @@ public:
 private:
     static LuaManager *_instance;
     explicit LuaManager(QObject *parent = 0);
+    void addLuaLoader(lua_CFunction func);
     lua_State *L;
     int windowWidth, windowHeight;
 

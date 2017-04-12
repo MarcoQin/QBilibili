@@ -7,6 +7,7 @@ extern "C"{
 #include "libs/lpack.h"
 #include "libs/lua-cjson/lua_cjson.h"
 }
+#include "encryption/QLuaLoader.h"
 using namespace std;
 
 
@@ -366,6 +367,7 @@ LuaManager::LuaManager(QObject *parent) : QObject(parent)
     luaopen_pack(L);             // lpack
     luaopen_cjson(L);            // lua-cjson
     lua_register(L, "getWindowSize", lua_getWindowSize);
+    addLuaLoader(q_lua_loader);
 
     qDebug() << QDir::currentPath();
     qDebug() << QCoreApplication::applicationDirPath();
@@ -390,6 +392,30 @@ LuaManager::~LuaManager()
     }
     delete _instance;
     _instance = NULL;
+}
+
+void LuaManager::addLuaLoader(lua_CFunction func)
+{
+    if (!func) return;
+        // stack content after the invoking of the function
+    // get loader table
+    lua_getglobal(L, "package");                                  /* L: package */
+    lua_getfield(L, -1, "loaders");                               /* L: package, loaders */
+
+    // insert loader into index 2
+    lua_pushcfunction(L, func);                                   /* L: package, loaders, func */
+    for (int i = (int)(lua_rawlen(L, -2) + 1); i > 2; --i)
+    {
+        lua_rawgeti(L, -2, i - 1);                                /* L: package, loaders, func, function */
+        // we call lua_rawgeti, so the loader table now is at -3
+        lua_rawseti(L, -3, i);                                    /* L: package, loaders, func */
+    }
+    lua_rawseti(L, -2, 2);                                        /* L: package, loaders */
+
+    // set loaders into package
+    lua_setfield(L, -2, "loaders");                               /* L: package */
+
+    lua_pop(L, 1);
 }
 
 void LuaManager::callDrawFunc(QPainter &painter)
