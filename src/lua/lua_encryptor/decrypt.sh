@@ -1,4 +1,5 @@
 #!/bin/sh
+mkdir -p debug
 EXDIR=`cd $(dirname $0); pwd`
 cd "$EXDIR/$1"
 yes | cp Makefile_Decrypt Makefile
