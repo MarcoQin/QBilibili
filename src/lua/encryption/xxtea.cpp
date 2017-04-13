@@ -1,200 +1,260 @@
-/***********************************************************************
+/**********************************************************\
+|                                                          |
+| xxtea.c                                                  |
+|                                                          |
+| XXTEA encryption algorithm library for C.                |
+|                                                          |
+| Encryption Algorithm Authors:                            |
+|      David J. Wheeler                                    |
+|      Roger M. Needham                                    |
+|                                                          |
+| Code Authors: Chen fei <cf850118@163.com>                |
+|               Ma Bingyao <mabingyao@gmail.com>           |
+| LastModified: Feb 7, 2016                                |
+|                                                          |
+\**********************************************************/
 
- Copyright 2006-2009 Ma Bingyao
- Copyright 2013 Gao Chunhui, Liu Tao
-
- These sources is free software. Redistributions of source code must
- retain the above copyright notice. Redistributions in binary form
- must reproduce the above copyright notice. You can redistribute it
- freely. You can use it with any free or commercial software.
-
- These sources is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY. Without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
- github: https://github.com/liut/pecl-xxtea
-
- *************************************************************************/
 
 #include "xxtea.h"
-#include "stdio.h"
-#include <memory.h>
-#include <stdlib.h>
 
-static void xxtea_long_encrypt(xxtea_long *v, xxtea_long len, xxtea_long *k)
-{
-    xxtea_long n = len - 1;
-    xxtea_long z = v[n], y = v[0], p, q = 6 + 52 / (n + 1), sum = 0, e;
-    if (n < 1) {
-        return;
+#include <string.h>
+#if defined(_MSC_VER) && _MSC_VER < 1600
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int32 uint32_t;
+#else
+#if defined(__FreeBSD__) && __FreeBSD__ < 5
+/* FreeBSD 4 doesn't have stdint.h file */
+#include <inttypes.h>
+#else
+#include <stdint.h>
+#endif
+#endif
+
+#include <sys/types.h> /* This will likely define BYTE_ORDER */
+
+#ifndef BYTE_ORDER
+#if (BSD >= 199103)
+# include <machine/endian.h>
+#else
+#if defined(linux) || defined(__linux__)
+# include <endian.h>
+#else
+#define LITTLE_ENDIAN   1234    /* least-significant byte first (vax, pc) */
+#define BIG_ENDIAN  4321    /* most-significant byte first (IBM, net) */
+#define PDP_ENDIAN  3412    /* LSB first in word, MSW first in long (pdp)*/
+
+#if defined(__i386__) || defined(__x86_64__) || defined(__amd64__) || \
+   defined(vax) || defined(ns32000) || defined(sun386) || \
+   defined(MIPSEL) || defined(_MIPSEL) || defined(BIT_ZERO_ON_RIGHT) || \
+   defined(__alpha__) || defined(__alpha)
+#define BYTE_ORDER    LITTLE_ENDIAN
+#endif
+
+#if defined(sel) || defined(pyr) || defined(mc68000) || defined(sparc) || \
+    defined(is68k) || defined(tahoe) || defined(ibm032) || defined(ibm370) || \
+    defined(MIPSEB) || defined(_MIPSEB) || defined(_IBMR2) || defined(DGUX) ||\
+    defined(apollo) || defined(__convex__) || defined(_CRAY) || \
+    defined(__hppa) || defined(__hp9000) || \
+    defined(__hp9000s300) || defined(__hp9000s700) || \
+    defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
+#define BYTE_ORDER  BIG_ENDIAN
+#endif
+#endif /* linux */
+#endif /* BSD */
+#endif /* BYTE_ORDER */
+
+#ifndef BYTE_ORDER
+#ifdef __BYTE_ORDER
+#if defined(__LITTLE_ENDIAN) && defined(__BIG_ENDIAN)
+#ifndef LITTLE_ENDIAN
+#define LITTLE_ENDIAN __LITTLE_ENDIAN
+#endif
+#ifndef BIG_ENDIAN
+#define BIG_ENDIAN __BIG_ENDIAN
+#endif
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#define BYTE_ORDER LITTLE_ENDIAN
+#else
+#define BYTE_ORDER BIG_ENDIAN
+#endif
+#endif
+#endif
+#endif
+
+#define MX (((z >> 5) ^ (y << 2)) + ((y >> 3) ^ (z << 4))) ^ ((sum ^ y) + (key[(p & 3) ^ e] ^ z))
+#define DELTA 0x9e3779b9
+
+#define FIXED_KEY \
+    size_t i;\
+    uint8_t fixed_key[16];\
+    memcpy(fixed_key, key, 16);\
+    for (i = 0; (i < 16) && (fixed_key[i] != 0); ++i);\
+    for (++i; i < 16; ++i) fixed_key[i] = 0;\
+
+
+static uint32_t * xxtea_to_uint_array(const uint8_t * data, size_t len, int inc_len, size_t * out_len) {
+    uint32_t *out;
+#if !(defined(BYTE_ORDER) && (BYTE_ORDER == LITTLE_ENDIAN))
+    size_t i;
+#endif
+    size_t n;
+
+    n = (((len & 3) == 0) ? (len >> 2) : ((len >> 2) + 1));
+
+    if (inc_len) {
+        out = (uint32_t *)calloc(n + 1, sizeof(uint32_t));
+        if (!out) return NULL;
+        out[n] = (uint32_t)len;
+        *out_len = n + 1;
     }
-    while (0 < q--) {
-        sum += XXTEA_DELTA;
-        e = sum >> 2 & 3;
-        for (p = 0; p < n; p++) {
-            y = v[p + 1];
-            z = v[p] += XXTEA_MX;
-        }
-        y = v[0];
-        z = v[n] += XXTEA_MX;
+    else {
+        out = (uint32_t *)calloc(n, sizeof(uint32_t));
+        if (!out) return NULL;
+        *out_len = n;
     }
+#if defined(BYTE_ORDER) && (BYTE_ORDER == LITTLE_ENDIAN)
+    memcpy(out, data, len);
+#else
+    for (i = 0; i < len; ++i) {
+        out[i >> 2] |= (uint32_t)data[i] << ((i & 3) << 3);
+    }
+#endif
+
+    return out;
 }
 
-static void xxtea_long_decrypt(xxtea_long *v, xxtea_long len, xxtea_long *k)
-{
-    xxtea_long n = len - 1;
-    xxtea_long z = v[n], y = v[0], p, q = 6 + 52 / (n + 1), sum = q * XXTEA_DELTA, e;
-    if (n < 1) {
-        return;
-    }
-    while (sum != 0) {
-        e = sum >> 2 & 3;
-        for (p = n; p > 0; p--) {
-            z = v[p - 1];
-            y = v[p] -= XXTEA_MX;
-        }
-        z = v[n];
-        y = v[0] -= XXTEA_MX;
-        sum -= XXTEA_DELTA;
-    }
-}
-
-static unsigned char *fix_key_length(unsigned char *key, xxtea_long key_len)
-{
-    unsigned char *tmp = (unsigned char *)malloc(16);
-    memcpy(tmp, key, key_len);
-    memset(tmp + key_len, '\0', 16 - key_len);
-    return tmp;
-}
-
-static xxtea_long *xxtea_to_long_array(unsigned char *data, xxtea_long len, int include_length, xxtea_long *ret_len) {
-    // printf("*****\n");
-    // printf("%s\n", data);
-    xxtea_long i, n, *result;
-
-    n = len >> 2;
-    n = (((len & 3) == 0) ? n : n + 1);
-    printf("to long array n: %ld\n", (long)n);
-    if (include_length) {
-        result = (xxtea_long *)malloc((n + 1) << 2);
-        result[n] = len;
-        *ret_len = n + 1;
-    } else {
-        result = (xxtea_long *)malloc(n << 2);
-        *ret_len = n;
-    }
-    memset(result, 0, n << 2);
-    for (i = 0; i < len; i++) {
-        result[i >> 2] |= (xxtea_long)data[i] << ((i & 3) << 3);
-    }
-
-    // xxtea_long l = (n+1) << 2;
-    // printf("l: %ld\n", (long)l);
-     // xxtea_long m = result[l - 2];
-     // printf("pre m: %ld\n", (long)m);
-     // printf("%s\n", data);
-     // printf("end\n");
-     // printf("%s\n", (char*)result);
-
-    return result;
-}
-
-static unsigned char *xxtea_to_byte_array(xxtea_long *data, xxtea_long len, int include_length, xxtea_long *ret_len) {
-    xxtea_long i, n, m;
-    unsigned char *result;
+static uint8_t * xxtea_to_ubyte_array(const uint32_t * data, size_t len, int inc_len, size_t * out_len) {
+    uint8_t *out;
+#if !(defined(BYTE_ORDER) && (BYTE_ORDER == LITTLE_ENDIAN))
+    size_t i;
+#endif
+    size_t m, n;
 
     n = len << 2;
-    printf("n: %ld\n", (long)n);
-    printf("len: %ld\n", (long)len);
-    if (include_length) {
+
+    if (inc_len) {
         m = data[len - 1];
-        printf("m: %ld\n", (long)m);
-        if ((m < n - 7) || (m > n - 4)) return NULL;
+        n -= 4;
+        if ((m < n - 3) || (m > n)) return NULL;
         n = m;
     }
-    printf("n again: %ld\n", (long)n);
-    result = (unsigned char *)malloc(n + 1);
-    for (i = 0; i < n; i++) {
-        result[i] = (unsigned char)((data[i >> 2] >> ((i & 3) << 3)) & 0xff);
-    }
-    result[n] = '\0';
-    *ret_len = n;
 
-    return result;
+    out = (uint8_t *)malloc(n + 1);
+
+#if defined(BYTE_ORDER) && (BYTE_ORDER == LITTLE_ENDIAN)
+    memcpy(out, data, n);
+#else
+    for (i = 0; i < n; ++i) {
+        out[i] = (uint8_t)(data[i >> 2] >> ((i & 3) << 3));
+    }
+#endif
+
+    out[n] = '\0';
+    *out_len = n;
+
+    return out;
 }
 
-static unsigned char *do_xxtea_encrypt(unsigned char *data, xxtea_long len, unsigned char *key, xxtea_long *ret_len) {
-    unsigned char *result;
-    xxtea_long *v, *k, v_len, k_len;
+static uint32_t * xxtea_uint_encrypt(uint32_t * data, size_t len, uint32_t * key) {
+    uint32_t n = (uint32_t)len - 1;
+    uint32_t z = data[n], y, p, q = 6 + 52 / (n + 1), sum = 0, e;
 
-    v = xxtea_to_long_array(data, len, 1, &v_len);
-    // k = xxtea_to_long_array(key, 16, 0, &k_len);
-    k = xxtea_to_long_array((unsigned char*)"123456", 16, 0, &k_len);
-    xxtea_long_encrypt(v, v_len, k);
-    result = xxtea_to_byte_array(v, v_len, 0, ret_len);
-    free(v);
-    free(k);
+    if (n < 1) return data;
 
-    return result;
-}
+    while (0 < q--) {
+        sum += DELTA;
+        e = sum >> 2 & 3;
 
-static unsigned char *do_xxtea_decrypt(unsigned char *data, xxtea_long len, unsigned char *key, xxtea_long *ret_len) {
-    unsigned char *result;
-    xxtea_long *v, *k, v_len, k_len;
+        for (p = 0; p < n; p++) {
+            y = data[p + 1];
+            z = data[p] += MX;
+        }
 
-    v = xxtea_to_long_array(data, len, 0, &v_len);
-    // k = xxtea_to_long_array(key, 16, 0, &k_len);
-    k = xxtea_to_long_array((unsigned char*)"123456", 16, 0, &k_len);
-    printf("v_len: %ld\n", (long)v_len);
-    printf("k_len: %ld\n", (long)k_len);
-    printf("v: %ld\n", (long)v);
-    printf("k: %ld\n", (long)k);
-    xxtea_long_decrypt(v, v_len, k);
-    printf("v_len: %ld\n", (long)v_len);
-    result = xxtea_to_byte_array(v, v_len, 1, ret_len);
-    free(v);
-    free(k);
-    // printf("result: %s\n", result);
-
-    return result;
-}
-
-unsigned char *xxtea_encrypt(unsigned char *data, xxtea_long data_len, unsigned char *key, xxtea_long key_len, xxtea_long *ret_length)
-{
-    unsigned char *result;
-
-    *ret_length = 0;
-
-    if (key_len < 16) {
-        unsigned char *key2 = fix_key_length(key, key_len);
-        result = do_xxtea_encrypt(data, data_len, key2, ret_length);
-        free(key2);
-    }
-    else
-    {
-        result = do_xxtea_encrypt(data, data_len, key, ret_length);
+        y = data[0];
+        z = data[n] += MX;
     }
 
-    return result;
+    return data;
 }
 
-unsigned char *xxtea_decrypt(unsigned char *data, xxtea_long data_len, unsigned char *key, xxtea_long key_len, xxtea_long *ret_length)
-{
-    unsigned char *result;
+static uint32_t * xxtea_uint_decrypt(uint32_t * data, size_t len, uint32_t * key) {
+    uint32_t n = (uint32_t)len - 1;
+    uint32_t z, y = data[0], p, q = 6 + 52 / (n + 1), sum = q * DELTA, e;
 
-    *ret_length = 0;
+    if (n < 1) return data;
 
-    if (key_len < 16) {
-        unsigned char *key2 = fix_key_length(key, key_len);
-        result = do_xxtea_decrypt(data, data_len, key2, ret_length);
-        free(key2);
+    while (sum != 0) {
+        e = sum >> 2 & 3;
+
+        for (p = n; p > 0; p--) {
+            z = data[p - 1];
+            y = data[p] -= MX;
+        }
+
+        z = data[n];
+        y = data[0] -= MX;
+        sum -= DELTA;
     }
-    else
-    {
-        result = do_xxtea_decrypt(data, data_len, key, ret_length);
-    }
 
-    return result;
+    return data;
 }
 
-/* }}} */
+static uint8_t * xxtea_ubyte_encrypt(const uint8_t * data, size_t len, const uint8_t * key, size_t * out_len) {
+    uint8_t *out;
+    uint32_t *data_array, *key_array;
+    size_t data_len, key_len;
+
+    if (!len) return NULL;
+
+    data_array = xxtea_to_uint_array(data, len, 1, &data_len);
+    if (!data_array) return NULL;
+
+    key_array  = xxtea_to_uint_array(key, 16, 0, &key_len);
+    if (!key_array) {
+        free(data_array);
+        return NULL;
+    }
+
+    out = xxtea_to_ubyte_array(xxtea_uint_encrypt(data_array, data_len, key_array), data_len, 0, out_len);
+
+    free(data_array);
+    free(key_array);
+
+    return out;
+}
+
+static uint8_t * xxtea_ubyte_decrypt(const uint8_t * data, size_t len, const uint8_t * key, size_t * out_len) {
+    uint8_t *out;
+    uint32_t *data_array, *key_array;
+    size_t data_len, key_len;
+
+    if (!len) return NULL;
+
+    data_array = xxtea_to_uint_array(data, len, 0, &data_len);
+    if (!data_array) return NULL;
+
+    key_array  = xxtea_to_uint_array(key, 16, 0, &key_len);
+    if (!key_array) {
+        free(data_array);
+        return NULL;
+    }
+
+    out = xxtea_to_ubyte_array(xxtea_uint_decrypt(data_array, data_len, key_array), data_len, 1, out_len);
+
+    free(data_array);
+    free(key_array);
+
+    return out;
+}
+
+// public functions
+
+void * xxtea_encrypt(const void * data, size_t len, const void * key, size_t * out_len) {
+    FIXED_KEY
+    return xxtea_ubyte_encrypt((const uint8_t *)data, len, fixed_key, out_len);
+}
+
+void * xxtea_decrypt(const void * data, size_t len, const void * key, size_t * out_len) {
+    FIXED_KEY
+    return xxtea_ubyte_decrypt((const uint8_t *)data, len, fixed_key, out_len);
+}

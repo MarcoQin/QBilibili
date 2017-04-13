@@ -1,47 +1,54 @@
-/***********************************************************************
+/**********************************************************\
+|                                                          |
+| xxtea.h                                                  |
+|                                                          |
+| XXTEA encryption algorithm library for C.                |
+|                                                          |
+| Encryption Algorithm Authors:                            |
+|      David J. Wheeler                                    |
+|      Roger M. Needham                                    |
+|                                                          |
+| Code Authors: Chen fei <cf850118@163.com>                |
+|               Ma Bingyao <mabingyao@gmail.com>           |
+| LastModified: Mar 3, 2015                                |
+|                                                          |
+\**********************************************************/
 
- Copyright 2006-2009 Ma Bingyao
- Copyright 2013 Gao Chunhui, Liu Tao
+#ifndef XXTEA_INCLUDED
+#define XXTEA_INCLUDED
 
- These sources is free software. Redistributions of source code must
- retain the above copyright notice. Redistributions in binary form
- must reproduce the above copyright notice. You can redistribute it
- freely. You can use it with any free or commercial software.
+#include <stdlib.h>
 
- These sources is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY. Without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
- github: https://github.com/liut/pecl-xxtea
-
- *************************************************************************/
-
-#ifndef XXTEA_H
-#define XXTEA_H
-
-#include <stddef.h> /* for size_t & NULL declarations */
-
-#if defined(_MSC_VER)
-
-typedef unsigned __int32 xxtea_long;
-
-#else
-
-#if defined(__FreeBSD__) && __FreeBSD__ < 5
-/* FreeBSD 4 doesn't have stdint.h file */
-#include <inttypes.h>
-#else
-#include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-typedef uint32_t xxtea_long;
+/**
+ * Function: xxtea_encrypt
+ * @data:    Data to be encrypted
+ * @len:     Length of the data to be encrypted
+ * @key:     Symmetric key
+ * @out_len: Pointer to output length variable
+ * Returns:  Encrypted data or %NULL on failure
+ *
+ * Caller is responsible for freeing the returned buffer.
+ */
+void * xxtea_encrypt(const void * data, size_t len, const void * key, size_t * out_len);
 
-#endif /* end of if defined(_MSC_VER) */
+/**
+ * Function: xxtea_decrypt
+ * @data:    Data to be decrypted
+ * @len:     Length of the data to be decrypted
+ * @key:     Symmetric key
+ * @out_len: Pointer to output length variable
+ * Returns:  Decrypted data or %NULL on failure
+ *
+ * Caller is responsible for freeing the returned buffer.
+ */
+void * xxtea_decrypt(const void * data, size_t len, const void * key, size_t * out_len);
 
-#define XXTEA_MX (z >> 5 ^ y << 2) + (y >> 3 ^ z << 4) ^ (sum ^ y) + (k[p & 3 ^ e] ^ z)
-#define XXTEA_DELTA 0x9e3779b9
-
-unsigned char *xxtea_encrypt(unsigned char *data, xxtea_long data_len, unsigned char *key, xxtea_long key_len, xxtea_long *ret_length);
-unsigned char *xxtea_decrypt(unsigned char *data, xxtea_long data_len, unsigned char *key, xxtea_long key_len, xxtea_long *ret_length);
+#ifdef __cplusplus
+}
+#endif
 
 #endif
