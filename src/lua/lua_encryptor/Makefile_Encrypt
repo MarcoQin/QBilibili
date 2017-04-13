@@ -1,0 +1,13 @@
+CFLAGS = -g
+
+debug/encryptor:debug/encryptor.o debug/xxtea.o
+	g++ -o $@ $^
+
+debug/encryptor.o:src/encryptor.cpp
+	g++ $(CFLAGS) -o $@ -c $<
+
+debug/xxtea.o:src/xxtea.cpp src/xxtea.h
+	g++ $(CFLAGS) -o $@ -c $<
+
+clean :
+	rm debug/encryptor debug/*.o
